@@ -1,23 +1,12 @@
-import streamlit as st
-import firebase_admin
-from firebase_admin import credentials, db
-
 if not firebase_admin._apps:
-    # Monta o dicionário dinamicamente
-    cred_dict = {
-        "type": "service_account",
-        "project_id": "bolao-copa-do-mundo-2026-c4d2c",
-        "private_key_id": "b891291f3e1cf8da0f19870284b60344e0c5dfe9",
-        "private_key": st.secrets["FIREBASE_CREDS"]["private_key"], # Lê a chave protegida
-        "client_email": "firebase-adminsdk-fbsvc@bolao-copa-do-mundo-2026-c4d2c.iam.gserviceaccount.com",
-        "client_id": "117855153000986243765",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40bolao-copa-do-mundo-2026-c4d2c.iam.gserviceaccount.com"
-    }
+    # Obtém o dicionário dos secrets
+    config = dict(st.secrets["FIREBASE_CREDS"])
     
-    cred = credentials.Certificate(cred_dict)
+    # IMPORTANTE: Corrige manualmente a quebra de linha na chave privada
+    # Se o TOML removeu os \n, nós reinserimos aqui para garantir o formato correto
+    config["private_key"] = config["private_key"].replace("\\n", "\n")
+    
+    cred = credentials.Certificate(config)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
     })
