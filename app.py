@@ -14,7 +14,6 @@ if not firebase_admin._apps:
     config = dict(st.secrets["FIREBASE_CREDS"])
     # Corrigimos a chave privada para garantir as quebras de linha
     config["private_key"] = config["private_key"].replace("\\n", "\n")
-    
     cred = credentials.Certificate(config)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
