@@ -1,10 +1,21 @@
-FIREBASE_SERVICE_ACCOUNT = '{"type": "service_account", "project_id": "bolao-copa-do-mundo-2026-c4d2c", "private_key_id": "...", "private_key": "...", ...}'
 import streamlit as st
-import pandas as pd
-from datetime import datetime, timedelta
 import firebase_admin
 from firebase_admin import credentials, db
 import json
+
+# Inicializa o Firebase
+if not firebase_admin._apps:
+    try:
+        # Tenta buscar dos secrets
+        secret_json = st.secrets["FIREBASE_SERVICE_ACCOUNT"]
+        cred_dict = json.loads(secret_json)
+        cred = credentials.Certificate(cred_dict)
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
+        })
+    except Exception as e:
+        st.error(f"Erro ao conectar ao Firebase: {e}")
+        st.stop()
 
 # 1. CONFIGURAÇÃO INICIAL (O Streamlit precisa ser o primeiro)
 st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
