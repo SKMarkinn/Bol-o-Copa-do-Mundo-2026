@@ -195,10 +195,9 @@ for jogo in jogos_do_grupo:
         if res:
             st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
     with col2:
-    # Inputs de palpite do usuário
-    g1_palpite = st.number_input(f"{jogo['t1']} gols", min_value=0, key=f"p1_{jogo['id']}")
-    g2_palpite = st.number_input(f"{jogo['t2']} gols", min_value=0, key=f"p2_{jogo['id']}")
-    if st.button("Salvar Palpite", key=f"btn_{jogo['id']}"):
+        g1_palpite = st.number_input(f"{jogo['t1']} gols", min_value=0, key=f"p1_{jogo['id']}")
+        g2_palpite = st.number_input(f"{jogo['t2']} gols", min_value=0, key=f"p2_{jogo['id']}")
+        if st.button("Salvar Palpite", key=f"btn_{jogo['id']}"):
         registrar_palpite(grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
         st.success("Palpite salvo!")
         pass
