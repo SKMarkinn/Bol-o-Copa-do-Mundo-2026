@@ -1,15 +1,23 @@
+import streamlit as st
+import pandas as pd
 import os
 import json
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, db
 
+# Inicialização do Firebase via Variável de Ambiente (Render)
 if not firebase_admin._apps:
-    # Obtém a chave do ambiente (será configurada no painel do Render)
-    firebase_config = json.loads(os.environ.get('FIREBASE_CONFIG_JSON'))
-    cred = credentials.Certificate(firebase_config)
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
-    })
+    try:
+        # Carrega a string JSON da variável de ambiente e converte para dicionário Python
+        config_string = os.environ.get('FIREBASE_CONFIG_JSON')
+        firebase_config = json.loads(config_string)
+        
+        cred = credentials.Certificate(firebase_config)
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
+        })
+    except Exception as e:
+        st.error(f"Erro ao inicializar Firebase: {e}")
 grupos_oficiais = {
     "Grupo A": ["México 🇲🇽", "África do Sul 🇿🇦", "Coreia do Sul 🇰🇷", "Rep. Tcheca 🇨🇿"],
     "Grupo B": ["Canadá 🇨🇦", "Bósnia e Herz. 🇧🇦", "Catar 🇶🇦", "Suíça 🇨🇭"],
