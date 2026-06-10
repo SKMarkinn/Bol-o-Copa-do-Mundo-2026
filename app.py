@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import json
 import firebase_admin
+from datetime import datetime
 from firebase_admin import credentials, db
 
 # Inicialização do Firebase via Variável de Ambiente (Render)
