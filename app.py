@@ -5,13 +5,10 @@ import firebase_admin
 from firebase_admin import credentials, db
 import json
 
-# Configuração da página
 st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
 st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
 
-# Inicialização do Firebase (Versão SIMPLIFICADA)
 if not firebase_admin._apps:
-    # Lê o ficheiro diretamente do GitHub
     cred = credentials.Certificate("firebase-key.json")
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
@@ -30,10 +27,6 @@ grupos_oficiais = {
     "Grupo K": ["Portugal 🇵🇹", "RD Congo 🇨🇩", "Uzbequistão 🇺🇿", "Colômbia 🇨🇴"],
     "Grupo L": ["Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Croácia 🇭🇷", "Gana 🇬🇭", "Panamá 🇵🇦"]
 }
-
-# ==========================================
-# 2. AGENDA DE JOGOS (APENAS DATA E HORA)
-# ==========================================
 agenda_oficial = {
     "Grupo A": [
         {"id": "A1", "t1": "México 🇲🇽", "t2": "África do Sul 🇿🇦", "data": "11/06/2026", "hora": "16:00"},
@@ -137,31 +130,28 @@ agenda_oficial = {
 # 3. LÓGICA E INICIALIZAÇÃO DA MEMÓRIA
 # ==========================================
 if 'tabelas_copa' not in st.session_state:
-    st.session_state.tabelas_copa = {}
-    for nome_grupo, times in grupos_oficiais.items():
-        st.session_state.tabelas_copa[nome_grupo] = {
-            time: {"pontos": 0, "vitorias": 0, "empates": 0, "derrotas": 0, "gols_pro": 0, "gols_sofridos": 0, "saldo": 0}
-            for time in times
-        }
+    st.session_state.tabelas_copa = {
+        g: {t: {"pontos": 0, "vitorias": 0, "empates": 0, "derrotas": 0, "gols_pro": 0, "gols_sofridos": 0, "saldo": 0} 
+        for t in times} for g, times in grupos_oficiais.items()
+    }
 
-if 'jogos_registrados' not in st.session_state:
-    st.session_state.jogos_registrados = set()
-    
 if 'mata_mata_32' not in st.session_state:
     st.session_state.mata_mata_32 = []
 
-def registrar_jogo(grupo, time1, gols1, time2, gols2):
-    ref = db.reference(f'palpites/{grupo}')
-    ref.push({
-        'time1': time1,
-        'gols1': gols1,
-        'time2': time2,
-        'gols2': gols2,
+def registrar_palpite_firebase(grupo, jogo_id, time1, gols1, time2, gols2):
+    # Função para salvar no Firebase
+    ref = db.reference(f'palpites/{grupo}/{jogo_id}')
+    ref.set({
+        'time1': time1, 'gols1': gols1,
+        'time2': time2, 'gols2': gols2,
         'data': datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     })
-    # Opcional: manter a lógica local também para a tabela atualizar na tela
-    # ... (seu código atual de atualizar tabela)
 
+def registrar_jogo(grupo, time1, gols1, time2, gols2):
+    # Acessa a tabela correta no session_state
+    tabela = st.session_state.tabelas_copa[grupo]
+    
+    # Lógica de pontos
     if gols1 > gols2:
         tabela[time1]["pontos"] += 3
         tabela[time1]["vitorias"] += 1
@@ -175,6 +165,14 @@ def registrar_jogo(grupo, time1, gols1, time2, gols2):
         tabela[time2]["pontos"] += 1
         tabela[time1]["empates"] += 1
         tabela[time2]["empates"] += 1
+    
+    tabela[time1]["gols_pro"] += gols1
+    tabela[time1]["gols_sofridos"] += gols2
+    tabela[time1]["saldo"] = tabela[time1]["gols_pro"] - tabela[time1]["gols_sofridos"]
+    
+    tabela[time2]["gols_pro"] += gols2
+    tabela[time2]["gols_sofridos"] += gols1
+    tabela[time2]["saldo"] = tabela[time2]["gols_pro"] - tabela[time2]["gols_sofridos"]
 
 # ==========================================
 # 4. INTERFACE: FASE DE GRUPOS E PALPITES
