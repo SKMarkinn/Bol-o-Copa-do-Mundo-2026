@@ -1,3 +1,4 @@
+FIREBASE_SERVICE_ACCOUNT = '{"type": "service_account", "project_id": "bolao-copa-do-mundo-2026-c4d2c", "private_key_id": "...", "private_key": "...", ...}'
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
