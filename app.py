@@ -1,10 +1,23 @@
+import streamlit as st
+import pandas as pd
+from datetime import datetime
+import firebase_admin
+from firebase_admin import credentials, db
+import json
+
+# Configuração da página (DEVE ser a primeira instrução)
+st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
+st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
+
+# Inicialização do Firebase
 if not firebase_admin._apps:
-    # Obtemos o dicionário original
-    config = dict(st.secrets["FIREBASE_CREDS"])
+    # Acessamos o dicionário diretamente
+    config = dict(st.secrets["gcp_service_account"])
     
-    # Criamos o dicionário de credenciais exatamente como o Firebase espera
-    cred_dict = {
-        "type": "service_account",
+    # Criamos o certificado garantindo que o \n seja interpretado como quebra de linha real
+    # O firebase-admin precisa do objeto de credencial puro
+    cred = credentials.Certificate({
+        "type": config["type"],
         "project_id": config["project_id"],
         "private_key_id": config["private_key_id"],
         "private_key": config["private_key"].replace("\\n", "\n"),
@@ -14,9 +27,8 @@ if not firebase_admin._apps:
         "token_uri": config["token_uri"],
         "auth_provider_x509_cert_url": config["auth_provider_x509_cert_url"],
         "client_x509_cert_url": config["client_x509_cert_url"]
-    }
+    })
     
-    cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
     })
