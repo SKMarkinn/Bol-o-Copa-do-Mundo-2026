@@ -128,33 +128,24 @@ agenda_oficial = {
         {"id": "L6", "t1": "Croácia 🇭🇷", "t2": "Gana 🇬🇭", "data": "27/06/2026", "hora": "18:00"}
     ]
 }
-
-# ==========================================
-# 3. LÓGICA E INICIALIZAÇÃO DA MEMÓRIA
-# ==========================================
 if 'tabelas_copa' not in st.session_state:
     st.session_state.tabelas_copa = {
         g: {t: {"pontos": 0, "vitorias": 0, "empates": 0, "derrotas": 0, "gols_pro": 0, "gols_sofridos": 0, "saldo": 0} 
         for t in times} for g, times in grupos_oficiais.items()
     }
-
+if 'jogos_registrados' not in st.session_state:
+    st.session_state.jogos_registrados = set()
 if 'mata_mata_32' not in st.session_state:
     st.session_state.mata_mata_32 = []
 
-def registrar_palpite_firebase(grupo, jogo_id, time1, gols1, time2, gols2):
-    # Função para salvar no Firebase
+# 4. Funções de Lógica
+def registrar_palpite(grupo, jogo_id, time1, gols1, time2, gols2):
     ref = db.reference(f'palpites/{grupo}/{jogo_id}')
-    ref.set({
-        'time1': time1, 'gols1': gols1,
-        'time2': time2, 'gols2': gols2,
-        'data': datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    })
+    ref.set({'t1': time1, 'g1': gols1, 't2': time2, 'g2': gols2, 'data': datetime.now().strftime("%d/%m/%Y %H:%M")})
 
 def registrar_jogo(grupo, time1, gols1, time2, gols2):
-    # Acessa a tabela correta no session_state
     tabela = st.session_state.tabelas_copa[grupo]
-    
-    # Lógica de pontos
+    # Lógica de pontos (se gols1 > gols2, etc...)
     if gols1 > gols2:
         tabela[time1]["pontos"] += 3
         tabela[time1]["vitorias"] += 1
@@ -172,140 +163,42 @@ def registrar_jogo(grupo, time1, gols1, time2, gols2):
     tabela[time1]["gols_pro"] += gols1
     tabela[time1]["gols_sofridos"] += gols2
     tabela[time1]["saldo"] = tabela[time1]["gols_pro"] - tabela[time1]["gols_sofridos"]
-    
     tabela[time2]["gols_pro"] += gols2
     tabela[time2]["gols_sofridos"] += gols1
     tabela[time2]["saldo"] = tabela[time2]["gols_pro"] - tabela[time2]["gols_sofridos"]
+def registrar_resultado_oficial(grupo, jogo_id, gols1, gols2):
+    # Admin: insere resultado real
+    db.reference(f'resultados_oficiais/{grupo}/{jogo_id}').set({'g1': gols1, 'g2': gols2})
+    st.success("Resultado oficial registrado!")
 
-# ==========================================
-# 4. INTERFACE: FASE DE GRUPOS E PALPITES
-# ==========================================
+# 5. Interface
 st.header("⚽ Fase de Grupos")
-grupo_selecionado = st.selectbox("Selecione o Grupo para palpitar e ver a tabela:", list(grupos_oficiais.keys()))
+grupo_selecionado = st.selectbox("Selecione o Grupo:", list(grupos_oficiais.keys()))
 
-col_tabela, col_placar = st.columns([1.5, 1])
+# Área de Admin (Opcional)
+with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
+    jogo_id_admin = st.text_input("ID do Jogo (ex: A1)")
+    c_adm1, c_adm2 = st.columns(2)
+    g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0)
+    g_adm2 = c_adm2.number_input("Gols Time 2", min_value=0)
+    if st.button("Salvar Placar Oficial"):
+        registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
 
-with col_tabela:
-    st.subheader(f"Tabela - {grupo_selecionado}")
-    df = pd.DataFrame.from_dict(st.session_state.tabelas_copa[grupo_selecionado], orient='index')
-    df = df.sort_values(by=['pontos', 'vitorias', 'saldo', 'gols_pro'], ascending=[False, False, False, False])
-    df = df.rename(columns={"pontos": "Pontos", "vitorias": "Vitórias", "empates": "Empates", "derrotas": "Derrotas", "gols_pro": "GP", "gols_sofridos": "GS", "saldo": "SG"})
-    st.dataframe(df, use_container_width=True)
-
-with col_placar:
-    st.subheader("Registrar Palpite")
-    jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
-    
-    if not jogos_do_grupo:
-        st.warning("⚠️ Agenda oficial não cadastrada.")
-    else:
-        opcoes = [f"{j['t1']} x {j['t2']}" for j in jogos_do_grupo]
-        escolha = st.selectbox("Selecione a Partida", opcoes)
-        idx = opcoes.index(escolha)
-        jogo_atual = jogos_do_grupo[idx]
-        
-        with st.container(border=True):
-            st.markdown(f"<h4 style='text-align: center;'>{jogo_atual['t1']} vs {jogo_atual['t2']}</h4>", unsafe_allow_html=True)
-            c1, c2 = st.columns(2)
-            c1.caption(f"📅 **Data:** {jogo_atual['data']}")
-            c2.caption(f"⏰ **Hora:** {jogo_atual['hora']}")
-            
-        formato = "%d/%m/%Y %H:%M"
-        hora_do_jogo = datetime.strptime(f"{jogo_atual['data']} {jogo_atual['hora']}", formato)
-        
-        # Sincronização automática com o fuso de Brasília
-        agora_brasil = datetime.utcnow() - timedelta(hours=3)
-        prazo_limite = hora_do_jogo - timedelta(minutes=1)
-        
-        if agora_brasil > prazo_limite:
-            st.error(f"🚨 Tempo esgotado! Prazo encerrou às {prazo_limite.strftime('%H:%M')}.")
-        else:
-            st.success(f"✅ Palpite liberado até as {prazo_limite.strftime('%H:%M')}.")
-            col_g1, col_x, col_g2 = st.columns([2,1,2])
-            with col_g1:
-                gols_t1 = st.number_input(f"{jogo_atual['t1']}", min_value=0, step=1, key="g1")
-            with col_x:
-                st.markdown("<h4 style='text-align: center; margin-top: 30px;'>X</h4>", unsafe_allow_html=True)
-            with col_g2:
-                gols_t2 = st.number_input(f"{jogo_atual['t2']}", min_value=0, step=1, key="g2")
-
-                if st.button("Salvar Resultado"):
-                   registrar_palpite_firebase(grupo_selecionado, jogo_atual['id'], jogo_atual['t1'], gols_t1, jogo_atual['t2'], gols_t2)
-                   st.success("Palpite enviado para o Banco de Dados!")
-                else:
-                   registrar_jogo(grupo_selecionado, jogo_atual['t1'], gols_t1, jogo_atual['t2'], gols_t2)
-                   st.session_state.jogos_registrados.add(jogo_atual['id'])
-                   st.rerun()
-
-st.divider()
-
-# ==========================================
-# 5. APURAÇÃO E CHAVEAMENTO AUTOMÁTICO
-# ==========================================
-st.header("🏆 Chaveamento Oficial (Mata-Mata)")
-
-if st.button("🔐 Encerrar Fase de Grupos e Gerar Chaveamento", type="primary", use_container_width=True):
-    primeiros = {}
-    segundos = {}
-    terceiros = []
-
-    for grupo in grupos_oficiais.keys():
-        df_grupo = pd.DataFrame.from_dict(st.session_state.tabelas_copa[grupo], orient='index')
-        df_grupo = df_grupo.sort_values(by=['pontos', 'vitorias', 'saldo', 'gols_pro'], ascending=[False, False, False, False])
-        times_ordenados = df_grupo.index.tolist()
-        
-        primeiros[grupo] = times_ordenados[0]
-        segundos[grupo] = times_ordenados[1]
-        
-        status_terceiro = df_grupo.iloc[2].to_dict()
-        status_terceiro["time"] = times_ordenados[2]
-        terceiros.append(status_terceiro)
-    
-    df_terceiros = pd.DataFrame(terceiros)
-    df_terceiros['gols_sofridos_neg'] = -df_terceiros['gols_sofridos'] 
-    df_terceiros = df_terceiros.sort_values(by=['pontos', 'vitorias', 'saldo', 'gols_pro', 'gols_sofridos_neg'], ascending=[False, False, False, False, False])
-    melhores_terceiros = df_terceiros.head(8)['time'].tolist()
-
-    st.session_state.mata_mata_32 = [
-        {"id": "M1", "t1": primeiros["Grupo A"], "t2": melhores_terceiros[0]},
-        {"id": "M2", "t1": segundos["Grupo B"], "t2": segundos["Grupo F"]},
-        {"id": "M3", "t1": primeiros["Grupo C"], "t2": melhores_terceiros[1]},
-        {"id": "M4", "t1": segundos["Grupo D"], "t2": segundos["Grupo H"]},
-        {"id": "M5", "t1": primeiros["Grupo E"], "t2": melhores_terceiros[2]},
-        {"id": "M6", "t1": segundos["Grupo A"], "t2": segundos["Grupo E"]},
-        {"id": "M7", "t1": primeiros["Grupo G"], "t2": melhores_terceiros[3]},
-        {"id": "M8", "t1": segundos["Grupo C"], "t2": segundos["Grupo G"]},
-        {"id": "M9", "t1": primeiros["Grupo I"], "t2": melhores_terceiros[4]},
-        {"id": "M10", "t1": primeiros["Grupo B"], "t2": segundos["Grupo I"]},
-        {"id": "M11", "t1": primeiros["Grupo K"], "t2": melhores_terceiros[5]},
-        {"id": "M12", "t1": primeiros["Grupo D"], "t2": segundos["Grupo J"]},
-        {"id": "M13", "t1": primeiros["Grupo L"], "t2": melhores_terceiros[6]},
-        {"id": "M14", "t1": primeiros["Grupo F"], "t2": segundos["Grupo K"]},
-        {"id": "M15", "t1": primeiros["Grupo J"], "t2": melhores_terceiros[7]},
-        {"id": "M16", "t1": primeiros["Grupo H"], "t2": segundos["Grupo L"]},
-    ]
-    st.rerun()
-
-if len(st.session_state.mata_mata_32) > 0:
-    st.success("✅ Chaveamento gerado com sucesso!")
-    st.info("⚠️ Em caso de empate no mata-mata, registre o placar somando os pênaltis.")
-    
-    for i in range(0, 16, 2):
-        col1, col2 = st.columns(2)
-        m1 = st.session_state.mata_mata_32[i]
-        with col1:
-            with st.container(border=True):
-                st.markdown(f"<p style='text-align:center;'><b>Jogo {i+1}</b></p>", unsafe_allow_html=True)
-                ca, cb, cc = st.columns([2,1,2])
-                ca.number_input(m1['t1'], min_value=0, step=1, key=f"g1_{m1['id']}")
-                cb.markdown("<h4 style='text-align: center; margin-top: 30px;'>X</h4>", unsafe_allow_html=True)
-                cc.number_input(m1['t2'], min_value=0, step=1, key=f"g2_{m1['id']}")
-                
-        m2 = st.session_state.mata_mata_32[i+1]
-        with col2:
-            with st.container(border=True):
-                st.markdown(f"<p style='text-align:center;'><b>Jogo {i+2}</b></p>", unsafe_allow_html=True)
-                ca, cb, cc = st.columns([2,1,2])
-                ca.number_input(m2['t1'], min_value=0, step=1, key=f"g1_{m2['id']}")
-                cb.markdown("<h4 style='text-align: center; margin-top: 30px;'>X</h4>", unsafe_allow_html=True)
-                cc.number_input(m2['t2'], min_value=0, step=1, key=f"g2_{m2['id']}")
+# Exibição do placar e comparação
+jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
+for jogo in jogos_do_grupo:
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.write(f"{jogo['t1']} x {jogo['t2']} ({jogo['data']})")
+        # Busca resultado oficial no Firebase
+        res = db.reference(f'resultados_oficiais/{grupo_selecionado}/{jogo['id']}').get()
+        if res:
+            st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
+    with col2:
+    # Inputs de palpite do usuário
+    g1_palpite = st.number_input(f"{jogo['t1']} gols", min_value=0, key=f"p1_{jogo['id']}")
+    g2_palpite = st.number_input(f"{jogo['t2']} gols", min_value=0, key=f"p2_{jogo['id']}")
+    if st.button("Salvar Palpite", key=f"btn_{jogo['id']}"):
+        registrar_palpite(grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
+        st.success("Palpite salvo!")
+        pass
