@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "bolao-copa-do-mundo-2026-c4d2c",
+  "private_key_id": "b891291f3e1cf8da0f19870284b60344e0c5dfe9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJsR6StPR34JlF\ngpNVzO5+XGZGu7jTDeL7XUcm8cTpYMxj0fEijt+CRtcUC+cXbEPdoJcQdKDzVqaF\n/Dgvbm2B1+5hxYLp5cA9M0RrLxCpeSUrR7kugt+elJqhNJRBnX2zZHiO+2yNAXcp\nBGOJFs4XWy6/qJaLO7zLCvUduTcDJrm0sLvZR6V9mG/IpdF53TQ6E/zIbvlL9hEZ\nyNQmdJdbV6Lk0WugF6onbm735F5l1aN2HgeAMOa203ERDgPBPuYFmzR5o0BOjsNd\n9ELiZ05oFwXfzXI9nsKraqdpTFQTACgsxdjAeTR3WnLVsVwB5doBk9G/ZElZZPR1\nnU+a+gBbAgMBAAECggEAA7KI885PTd8LuJWsRbzktz+Kvz7Y+4WqOoL/BqoAfXQf\n2IbvPYDXr9CwHvbwLOKRycR/yg11Iaagn7bvYhrk9SXnaDat5YZQr+6HSbQhg9g7\nE04uMhsah5fLxc74xI/jK7Evwz1/yNW40ppAscCH+RrMcIj7ovdumq7YXGqNgYXA\nGAb0K2Jff8olEM+Dtywl/sSrwrMj6fjEgNU8LTGp9+ePUqcJ3xSPJqg71o4JRIuK\nVSNkb/bHvZn5jSY4pBgD5mwE9wyvHi1993BhES0ukOT+1edxhuW/akM2x+2VyM3D\n3yccVWAZahbqHz6ZxYRGMnrlgjcdTDPHb+43K/C76QKBgQD+PyqzKw9QeSkgns7E\nn9uZ3ihnbKbjMJrRMgTflnAo8vXAYP7AZ5pCaHISrWrXbTSSsV4nSXmJvhs+nk84\nNOJUo6DUmyBEzPIt65VmngyoIlhWLeGHtMpzgHhsjQXgz6Fe5aiXT3JlzpCo7lcH\nRmzeMa9UwZBxfBOLwCHLyRaN0wKBgQDLFSzWvkXmfu0Bv21gr0y4kgdeClVQSuG5\n6l6iGSS6yGLvlSv0Cg2OeOGNOJcDSoBykaBDmHhLXuWtu1s9y4HCqRVVAAkxMrfm\nXk48ChZW4z7i93nIg4U+s/JrwxvoduZYXutRC9lBxtXFGMho2QV+tG6VlTQ4qetU\nmKVHQ1lGWQKBgG9x0s68hjb5FQ0Gb44CoGje14kWOEUHziT6ruYu9DUO4qgUHDbM\ncvK/A5mqSFXruYq/kozYCR1WpmyZShJSJA+DtgDbipZ9235DcLaNevDMNTp5XA13\nMvLUEnVKj5QOjyagtni0y2lS1VgnOSCoPxpaXwdg3WbRQ2QTsPy5xVgfAoGANGcn\nZdY9VUflQnEx+SPi6TGNQx/pecmIy5+FgdB5INV6ahYU/GjnrJ7WnMlAdnHwCSA4\nuZiLWe+H1rekyKJNvnxA6+kRdid/OquVBnsX3p3O6WQwgaQmatKmOFZlSiv8Lkt3\n7zbefdGf8bb+Z8ewWkyWyHRywDhgaDjnVSc0zykCgYEA1v7jKu+axXQygj6gKr8O\negGeOVtr9ijIN9EdwzMIrYUIedbq/1eXgVZeYhUFAlAyK4Kk3f02aYfqG3cHKd+N\nNFR6QkcSfAx0+zZCnA0AS9WdRx4yN3A6VPcn+4JTMWH53M66nGRg1W7lSurRqotW\nOLM3IiIQDZxHiTzIsuKjm7A=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@bolao-copa-do-mundo-2026-c4d2c.iam.gserviceaccount.com",
+  "client_id": "117855153000986243765",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40bolao-copa-do-mundo-2026-c4d2c.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
