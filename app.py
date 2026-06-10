@@ -1,22 +1,15 @@
 import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, db
-import json
 
-# Inicializa o Firebase
+# 1. Pega as credenciais diretamente como um dicionário (sem usar json.loads)
 if not firebase_admin._apps:
-    try:
-        # Tenta buscar dos secrets
-        secret_json = st.secrets["FIREBASE_SERVICE_ACCOUNT"]
-        cred_dict = json.loads(secret_json)
-        cred = credentials.Certificate(cred_dict)
-        firebase_admin.initialize_app(cred, {
-            'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
-        })
-    except Exception as e:
-        st.error(f"Erro ao conectar ao Firebase: {e}")
-        st.stop()
-
+    # Acessa os secrets como um objeto direto, sem precisar de json.loads
+    # Certifique-se de que no painel de Secrets esteja apenas o bloco da chave
+    cred = credentials.Certificate(dict(st.secrets["gcp_service_account"]))
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
+    })
 # 1. CONFIGURAÇÃO INICIAL (O Streamlit precisa ser o primeiro)
 st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
 st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
