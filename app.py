@@ -10,18 +10,14 @@ st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
 st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
 
 # Inicialização do Firebase
+# Inicialização simples lendo o ficheiro local (firebase-key.json)
 if not firebase_admin._apps:
-    # Acessamos o dicionário diretamente
-    config = dict(st.secrets["gcp_service_account"])
+    # O firebase_admin lê o ficheiro diretamente da pasta do projeto
+    cred = credentials.Certificate("firebase-key.json")
     
-    # Criamos o certificado garantindo que o \n seja interpretado como quebra de linha real
-    # O firebase-admin precisa do objeto de credencial puro
-    cred = credentials.Certificate({
-        "type": config["type"],
-        "project_id": config["project_id"],
-        "private_key_id": config["private_key_id"],
-        "private_key": config["private_key"].replace("\\n", "\n"),
-        "client_email": config["client_email"],
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
+    })
         "client_id": config["client_id"],
         "auth_uri": config["auth_uri"],
         "token_uri": config["token_uri"],
