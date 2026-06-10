@@ -1,12 +1,10 @@
 if not firebase_admin._apps:
-    # Obtém o dicionário dos secrets
+    # Lê as credenciais do Secrets
     config = dict(st.secrets["FIREBASE_CREDS"])
     
-    # IMPORTANTE: Corrige manualmente a quebra de linha na chave privada
-    # Se o TOML removeu os \n, nós reinserimos aqui para garantir o formato correto
-    config["private_key"] = config["private_key"].replace("\\n", "\n")
-    
+    # O Firebase precisa de um objeto credencial
     cred = credentials.Certificate(config)
+    
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
     })
