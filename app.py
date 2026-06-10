@@ -152,14 +152,16 @@ if 'mata_mata_32' not in st.session_state:
     st.session_state.mata_mata_32 = []
 
 def registrar_jogo(grupo, time1, gols1, time2, gols2):
-    tabela = st.session_state.tabelas_copa[grupo]
-    tabela[time1]["gols_pro"] += gols1
-    tabela[time1]["gols_sofridos"] += gols2
-    tabela[time2]["gols_pro"] += gols2
-    tabela[time2]["gols_sofridos"] += gols1
-
-    tabela[time1]["saldo"] = tabela[time1]["gols_pro"] - tabela[time1]["gols_sofridos"]
-    tabela[time2]["saldo"] = tabela[time2]["gols_pro"] - tabela[time2]["gols_sofridos"]
+    ref = db.reference(f'palpites/{grupo}')
+    ref.push({
+        'time1': time1,
+        'gols1': gols1,
+        'time2': time2,
+        'gols2': gols2,
+        'data': datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    })
+    # Opcional: manter a lógica local também para a tabela atualizar na tela
+    # ... (seu código atual de atualizar tabela)
 
     if gols1 > gols2:
         tabela[time1]["pontos"] += 3
