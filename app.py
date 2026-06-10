@@ -1,30 +1,18 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import firebase_admin
 from firebase_admin import credentials, db
 import json
 
-# Configuração da página (DEVE ser a primeira instrução)
+# Configuração da página
 st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
 st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
 
-# Inicialização do Firebase
-# Inicialização simples lendo o ficheiro local (firebase-key.json)
+# Inicialização do Firebase (Versão SIMPLIFICADA)
 if not firebase_admin._apps:
-    # O firebase_admin lê o ficheiro diretamente da pasta do projeto
+    # Lê o ficheiro diretamente do GitHub
     cred = credentials.Certificate("firebase-key.json")
-    
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
-    })
-        "client_id": config["client_id"],
-        "auth_uri": config["auth_uri"],
-        "token_uri": config["token_uri"],
-        "auth_provider_x509_cert_url": config["auth_provider_x509_cert_url"],
-        "client_x509_cert_url": config["client_x509_cert_url"]
-    })
-    
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
     })
