@@ -229,13 +229,12 @@ with col_placar:
                 gols_t2 = st.number_input(f"{jogo_atual['t2']}", min_value=0, step=1, key="g2")
 
                 if st.button("Salvar Resultado"):
-        registrar_palpite_firebase(grupo_selecionado, jogo_atual['id'], jogo_atual['t1'], gols_t1, jogo_atual['t2'], gols_t2)
-        st.success("Palpite enviado para o Banco de Dados!")
-    else:
-       
-        registrar_jogo(grupo_selecionado, jogo_atual['t1'], gols_t1, jogo_atual['t2'], gols_t2)
-        st.session_state.jogos_registrados.add(jogo_atual['id'])
-        st.rerun()
+                   registrar_palpite_firebase(grupo_selecionado, jogo_atual['id'], jogo_atual['t1'], gols_t1, jogo_atual['t2'], gols_t2)
+                   st.success("Palpite enviado para o Banco de Dados!")
+                else:
+                   registrar_jogo(grupo_selecionado, jogo_atual['t1'], gols_t1, jogo_atual['t2'], gols_t2)
+                   st.session_state.jogos_registrados.add(jogo_atual['id'])
+                   st.rerun()
 
 st.divider()
 
