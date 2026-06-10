@@ -1,21 +1,15 @@
-import streamlit as st
-import pandas as pd
-from datetime import datetime, timedelta
+import os
+import json
 import firebase_admin
-from firebase_admin import credentials, db
-
-# 1. Configuração e Inicialização Firebase
-st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
-st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
+from firebase_admin import credentials
 
 if not firebase_admin._apps:
-    try:
-        # Apenas inicializamos a app sem a necessidade de ficheiro JSON
-        firebase_admin.initialize_app(options={
-            'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
-        })
-    except Exception as e:
-        st.error(f"Erro de conexão Firebase: {e}")
+    # Obtém a chave do ambiente (será configurada no painel do Render)
+    firebase_config = json.loads(os.environ.get('FIREBASE_CONFIG_JSON'))
+    cred = credentials.Certificate(firebase_config)
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
+    })
 grupos_oficiais = {
     "Grupo A": ["México 🇲🇽", "África do Sul 🇿🇦", "Coreia do Sul 🇰🇷", "Rep. Tcheca 🇨🇿"],
     "Grupo B": ["Canadá 🇨🇦", "Bósnia e Herz. 🇧🇦", "Catar 🇶🇦", "Suíça 🇨🇭"],
