@@ -1,13 +1,18 @@
 import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, db
+import json
 
-# Inicializa o Firebase com as credenciais do Streamlit Secrets
+# Inicializa o Firebase
 if not firebase_admin._apps:
-       cred_dict = dict(st.secrets["gcp_service_account"])
-       cred = credentials.Certificate(cred_dict)
-       firebase_admin.initialize_app(cred, {
-        'databaseURL':'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/' })
+    # Vamos pegar o JSON diretamente dos secrets como um texto puro
+    firebase_json = st.secrets["FIREBASE_SERVICE_ACCOUNT"]
+    cred_dict = json.loads(firebase_json)
+    
+    cred = credentials.Certificate(cred_dict)
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
+    })
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
