@@ -8,12 +8,12 @@ from firebase_admin import credentials, db
 st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
 st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
 
-# Inicialização do Firebase via conexão pública (sem chaves secretas)
 if not firebase_admin._apps:
-    # Apenas inicializamos a app sem a necessidade do ficheiro JSON
-    firebase_admin.initialize_app(options={
-        'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
-    })
+    try:
+        # Apenas inicializamos a app sem a necessidade de ficheiro JSON
+        firebase_admin.initialize_app(options={
+            'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
+        })
     except Exception as e:
         st.error(f"Erro de conexão Firebase: {e}")
 grupos_oficiais = {
