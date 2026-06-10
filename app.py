@@ -1,11 +1,17 @@
 import streamlit as st
+import pandas as pd
+from datetime import datetime, timedelta
 import firebase_admin
 from firebase_admin import credentials, db
 import json
 
-# Inicializa o Firebase
+# 1. CONFIGURAÇÃO INICIAL (O Streamlit precisa ser o primeiro)
+st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
+st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
+
+# 2. INICIALIZAÇÃO DO FIREBASE
 if not firebase_admin._apps:
-    # Vamos pegar o JSON diretamente dos secrets como um texto puro
+    # Lê a string do secret e transforma em dicionário
     firebase_json = st.secrets["FIREBASE_SERVICE_ACCOUNT"]
     cred_dict = json.loads(firebase_json)
     
@@ -13,15 +19,6 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
     })
-import streamlit as st
-import pandas as pd
-from datetime import datetime, timedelta
-
-# ==========================================
-# 1. CONFIGURAÇÃO INICIAL
-# ==========================================
-st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
-st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
 
 grupos_oficiais = {
     "Grupo A": ["México 🇲🇽", "África do Sul 🇿🇦", "Coreia do Sul 🇰🇷", "Rep. Tcheca 🇨🇿"],
