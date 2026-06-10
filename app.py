@@ -1,10 +1,21 @@
+import streamlit as st
+import pandas as pd
+from datetime import datetime, timedelta
+import firebase_admin
+from firebase_admin import credentials, db
+import json
+
+# 1. Configuração da página (deve ser a primeira função do Streamlit)
+st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
+st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
+
+# 2. Agora sim, inicializa o Firebase
 if not firebase_admin._apps:
-    # Lê as credenciais do Secrets
     config = dict(st.secrets["FIREBASE_CREDS"])
+    # Corrigimos a chave privada para garantir as quebras de linha
+    config["private_key"] = config["private_key"].replace("\\n", "\n")
     
-    # O Firebase precisa de um objeto credencial
     cred = credentials.Certificate(config)
-    
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
     })
