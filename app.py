@@ -1,26 +1,23 @@
 import streamlit as st
 import firebase_admin
 from firebase_admin import credentials, db
-import json
 
-# 1. Definimos um dicionário com os teus dados da chave JSON
-# Desta forma, o Python lê como um objeto nativo, sem problemas de formato TOML
-firebase_config = {
-    "type": "service_account",
-    "project_id": "bolao-copa-do-mundo-2026-c4d2c",
-    "private_key_id": "b891291f3e1cf8da0f19870284b60344e0c5dfe9",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJsR6StPR34J1F\nngPNvz05+XGZGu7jTDeL7XUcm8cTpYMxj0fEijt+CRtcUC+cXbEPdoJcQdKDzVqaF\nDgvbm2B1+5hxYLp5cA9M0RrLxCpeSUrR7kugt+elJqhNJRBnX2zZHi0+2yNAXcp\nBG0JfS4XWy6/qJaL07zlCvUd/pecmIy5+FgdB5INV6ahYU/GjnJ7WnMlAdnHwCSA4\nnuZiLWe+H1rekyKJNvnA6+kRdid/0quVBnsX3p306WQwgaQmatKmOFZ1Siv8Lkt3\nn7zbefdGf8bb+Z8ewWkyWyHRywDhgDjnVSc0zykCgYEA1v7jKu+axXQygj6gKr80\nnegGe0Vtr9ijIN9EdwMIRyUIedbq/1eXgVZeYhUFAlAyK4Kk3f02aYfqG3cHKd+N\nNFR6QkcSfAx0+zZCnA0AS9Wdrx4yN3A6VPcn+4JTMWH53M66nGRg1W7lSurRqotw\nOLM3IiIQDzxHiZIsuKjm7A==\n-----END PRIVATE KEY-----\n",
-    "client_email": "firebase-adminsdk-fbsvc@bolao-copa-do-mundo-2026-c4d2c.iam.gserviceaccount.com",
-    "client_id": "117855153000986243765",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40bolao-copa-do-mundo-2026-c4d2c.iam.gserviceaccount.com"
-}
-
-# 2. Inicializamos o Firebase com este dicionário direto
 if not firebase_admin._apps:
-    cred = credentials.Certificate(firebase_config)
+    # Monta o dicionário dinamicamente
+    cred_dict = {
+        "type": "service_account",
+        "project_id": "bolao-copa-do-mundo-2026-c4d2c",
+        "private_key_id": "b891291f3e1cf8da0f19870284b60344e0c5dfe9",
+        "private_key": st.secrets["FIREBASE_CREDS"]["private_key"], # Lê a chave protegida
+        "client_email": "firebase-adminsdk-fbsvc@bolao-copa-do-mundo-2026-c4d2c.iam.gserviceaccount.com",
+        "client_id": "117855153000986243765",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40bolao-copa-do-mundo-2026-c4d2c.iam.gserviceaccount.com"
+    }
+    
+    cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
     })
