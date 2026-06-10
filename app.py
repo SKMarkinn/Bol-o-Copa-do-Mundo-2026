@@ -1,20 +1,22 @@
-import streamlit as st
-import pandas as pd
-from datetime import datetime, timedelta
-import firebase_admin
-from firebase_admin import credentials, db
-import json
-
-# 1. Configuração da página (deve ser a primeira função do Streamlit)
-st.set_page_config(page_title="Bolão da Copa 2026", layout="wide")
-st.title("🏆 Bolão da Copa 2026 - Simulador Oficial")
-
-# 2. Agora sim, inicializa o Firebase
 if not firebase_admin._apps:
+    # Obtemos o dicionário original
     config = dict(st.secrets["FIREBASE_CREDS"])
-    # Corrigimos a chave privada para garantir as quebras de linha
-    config["private_key"] = config["private_key"].replace("\\n", "\n")
-    cred = credentials.Certificate(config)
+    
+    # Criamos o dicionário de credenciais exatamente como o Firebase espera
+    cred_dict = {
+        "type": "service_account",
+        "project_id": config["project_id"],
+        "private_key_id": config["private_key_id"],
+        "private_key": config["private_key"].replace("\\n", "\n"),
+        "client_email": config["client_email"],
+        "client_id": config["client_id"],
+        "auth_uri": config["auth_uri"],
+        "token_uri": config["token_uri"],
+        "auth_provider_x509_cert_url": config["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": config["client_x509_cert_url"]
+    }
+    
+    cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred, {
         'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
     })
