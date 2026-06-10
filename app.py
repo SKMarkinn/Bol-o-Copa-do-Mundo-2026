@@ -212,11 +212,11 @@ with col_placar:
             st.success(f"✅ Palpite liberado até as {prazo_limite.strftime('%H:%M')}.")
             col_g1, col_x, col_g2 = st.columns([2,1,2])
             with col_g1:
-                gols_t1 = st.number_input(f"Gols {jogo_atual['t1']}", min_value=0, step=1, key="g1")
+                gols_t1 = st.number_input(f"{jogo_atual['t1']}", min_value=0, step=1, key="g1")
             with col_x:
                 st.markdown("<h4 style='text-align: center; margin-top: 30px;'>X</h4>", unsafe_allow_html=True)
             with col_g2:
-                gols_t2 = st.number_input(f"Gols {jogo_atual['t2']}", min_value=0, step=1, key="g2")
+                gols_t2 = st.number_input(f"{jogo_atual['t2']}", min_value=0, step=1, key="g2")
             
             if st.button("Salvar Resultado", type="primary", use_container_width=True):
                 id_jogo = jogo_atual['id']
