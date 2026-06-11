@@ -188,15 +188,6 @@ with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
     if st.button("Salvar Placar Oficial"):
         registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
         st.success("Resultado oficial registrado!")
-
-# --- AQUI COMEÇA A TRAVA DE TEMPO ---
-brasilia_tz = pytz.timezone('America/Sao_Paulo')
-# Certifique-se que o campo existe no Firebase ou monte a string:
-data_hora_str = f"{jogo['data']} {jogo['hora']}:00" 
-horario_jogo = datetime.strptime(data_hora_str, "%d/%m/%Y %H:%M:%S")
-agora = datetime.now(brasilia_tz).replace(tzinfo=None)
-limite_palpite = horario_jogo - timedelta(minutes=1)
-
 if agora < limite_palpite:
     # Lógica de palpite do usuário (aparece só antes do jogo)
     g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
