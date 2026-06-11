@@ -50,34 +50,35 @@ def gerar_ranking():
     palpites_db = db.reference('palpites').get()
     resultados_db = db.reference('resultados_oficiais').get()
     
-    # Se não houver palpites, retorna vazio
-    if not palpites_db: 
-        return pd.DataFrame()
+    if not palpites_db or not resultados_db: return pd.DataFrame()
     
     ranking = {}
     
-    # 1. Percorre os grupos nos palpites
-    for grupo, jogos in palpites_db.items():
-        # 2. Percorre os IDs dos jogos dentro do grupo
-        for jogo_id, palpites_no_jogo in jogos.items():
+    for grupo, jogos_no_grupo in palpites_db.items():
+        if grupo not in resultados_db: continue
             
-            # Verifica se existe um resultado oficial correspondente para esse grupo e jogo
-            if resultados_db and grupo in resultados_db and jogo_id in resultados_db[grupo]:
+        for jogo_id, usuarios_no_jogo in jogos_no_grupo.items():
+            # AQUI ESTÁ O PULO DO GATO:
+            # Vamos imprimir para ver se o jogo_id do palpite existe nos resultados
+            # st.write(f"Comparando Jogo {jogo_id} do {grupo}") # Descomente se precisar
+            
+            if jogo_id in resultados_db[grupo]:
                 res = resultados_db[grupo][jogo_id]
                 
-                # 3. Percorre os usuários que deram palpite nesse jogo
-                for usuario, dados in palpites_no_jogo.items():
-                    if usuario not in ranking:
-                        ranking[usuario] = 0
+                for usuario, palpite in usuarios_no_jogo.items():
+                    if usuario not in ranking: ranking[usuario] = 0
                     
-                    # Calcula e soma os pontos
-                    pts = calcular_pontos(dados['gols1'], dados['gols2'], res['g1'], res['g2'])
+                    # Garantir que temos gols nos palpites
+                    g1_p = palpite.get('gols1', 0)
+                    g2_p = palpite.get('gols2', 0)
+                    g1_r = res.get('g1', 0)
+                    g2_r = res.get('g2', 0)
+                    
+                    pts = calcular_pontos(g1_p, g2_p, g1_r, g2_r)
                     ranking[usuario] += pts
                         
-    # Cria o DataFrame e trata o resultado
-    if not ranking:
-        return pd.DataFrame()
-        
+    if not ranking: return pd.DataFrame()
+    
     df = pd.DataFrame(list(ranking.items()), columns=['Usuário', 'Pontos'])
     return df.sort_values(by='Pontos', ascending=False)
 # --- 1. CARREGAMENTO DOS DADOS ---
