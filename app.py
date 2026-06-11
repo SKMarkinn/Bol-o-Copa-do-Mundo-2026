@@ -247,23 +247,16 @@ for jogo in jogos_do_grupo:
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
 # --- DEBUG DO RANKING ---
+# --- EXIBIÇÃO DO RANKING NO FINAL DA PÁGINA ---
 st.divider()
-st.header("🏆 Debug de Classificação")
+st.header("🏆 Classificação Copástica")
 
-palpites_db = db.reference('palpites').get()
-resultados_db = db.reference('resultados_oficiais').get()
+# Chamamos a função diretamente
+df_ranking = gerar_ranking()
 
-if not palpites_db:
-    st.warning("Nenhum palpite encontrado no Firebase.")
+# Exibição personalizada
+if not df_ranking.empty:
+    # use_container_width=True faz a tabela ocupar a largura da tela (fica mais bonito)
+    st.dataframe(df_ranking, use_container_width=True, hide_index=True)
 else:
-    # Mostra o que o banco está a entregar
-    st.write("Dados brutos do banco:", palpites_db)
-    
-    # Tenta gerar o ranking
-    df_ranking = gerar_ranking()
-    
-    if df_ranking.empty:
-        st.error("O ranking gerou um DataFrame vazio. Verifique se os nomes dos grupos/jogos coincidem.")
-    else:
-        st.success("Ranking gerado com sucesso!")
-        st.table(df_ranking)
+    st.info("Ainda não há palpites computados.")
