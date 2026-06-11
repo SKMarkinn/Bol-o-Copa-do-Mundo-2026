@@ -74,6 +74,7 @@ def gerar_ranking():
                         
     # Transforma o dicionário em uma Tabela (DataFrame) e ordena
     df = pd.DataFrame(list(ranking.items()), columns=['Usuário', 'Pontos'])
+    df = df.groupby('Usuário', as_index=False)['Pontos'].sum()
     return df.sort_values(by='Pontos', ascending=False)
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
@@ -247,19 +248,24 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-# --- EXIBIÇÃO DO RANKING NO FINAL DA PÁGINA ---
+# --- DEBUG DO RANKING ---
 st.divider()
-st.header("🏆 Classificação Geral")
+st.header("🏆 Debug de Classificação")
 
-# Verifica se existem resultados oficiais no banco de dados
-if db.reference('resultados_oficiais').get():
-    # Chama a função que criamos no Passo 2
+palpites_db = db.reference('palpites').get()
+resultados_db = db.reference('resultados_oficiais').get()
+
+if not palpites_db:
+    st.warning("Nenhum palpite encontrado no Firebase.")
+else:
+    # Mostra o que o banco está a entregar
+    st.write("Dados brutos do banco:", palpites_db)
+    
+    # Tenta gerar o ranking
     df_ranking = gerar_ranking()
     
-    # Exibe a tabela se ela não estiver vazia
-    if not df_ranking.empty:
-        st.table(df_ranking)
+    if df_ranking.empty:
+        st.error("O ranking gerou um DataFrame vazio. Verifique se os nomes dos grupos/jogos coincidem.")
     else:
-        st.write("Ainda não há palpites computados.")
-else:
-    st.info("O ranking será exibido após o registro do primeiro resultado oficial.")
+        st.success("Ranking gerado com sucesso!")
+        st.table(df_ranking)
