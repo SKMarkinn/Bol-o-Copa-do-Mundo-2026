@@ -188,15 +188,6 @@ with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
     if st.button("Salvar Placar Oficial"):
         registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
         st.success("Resultado oficial registrado!")
-if agora < limite_palpite:
-    # Lógica de palpite do usuário (aparece só antes do jogo)
-    g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
-    g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
-    if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
-        registrar_palpite(grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
-        st.success("Palpite salvo!")
-else:
-    st.error("🔒 Palpites encerrados!")
     jogo_id_admin = st.text_input("ID do Jogo (ex: A1)")
     c_adm1, c_adm2 = st.columns(2)
     g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0)
