@@ -4,7 +4,13 @@ import firebase_admin
 from firebase_admin import credentials, db
 from datetime import datetime, timedelta
 import pytz
-
+# --- INICIALIZAÇÃO DO FIREBASE ---
+if not firebase_admin._apps:
+    # Substitua 'caminho/para/seu-arquivo-json.json' pelo nome do seu arquivo de credenciais
+    cred = credentials.Certificate("seu-arquivo-de-credenciais.json")
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://seu-projeto-firebase.firebaseio.com/'
+    })
 def registrar_palpite(grupo, jogo_id, t1, g1, t2, g2):
     ref = db.reference(f'palpites/{grupo}/{jogo_id}')
     ref.push({'time1': t1, 'gols1': g1, 'time2': t2, 'gols2': g2})
