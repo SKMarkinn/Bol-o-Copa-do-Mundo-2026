@@ -54,12 +54,12 @@ def gerar_ranking():
     
     ranking = {}
     
-    for grupo, usuarios_no_grupo in palpites_db.items():
-        # AQUI MUDAMOS: Agora o loop percorre os usuários diretamente dentro do grupo
-        for usuario, palpites_do_usuario in usuarios_no_grupo.items():
-            
-            # palpites_do_usuario é um dicionário onde a chave é o jogo_id
-            for jogo_id, palpite in palpites_do_usuario.items():
+    # 1. Grupo
+    for grupo, jogos_no_grupo in palpites_db.items():
+        # 2. jogo_id (ex: A1)
+        for jogo_id, usuarios_no_jogo in jogos_no_grupo.items():
+            # 3. Usuario (ex: Josue)
+            for usuario, palpite in usuarios_no_jogo.items():
                 
                 # Verifica se existe resultado para este jogo
                 if resultados_db and grupo in resultados_db and jogo_id in resultados_db[grupo]:
@@ -70,7 +70,10 @@ def gerar_ranking():
                     ranking[usuario] += pts
                         
     df = pd.DataFrame(list(ranking.items()), columns=['Usuário', 'Pontos'])
-    return df.groupby('Usuário', as_index=False)['Pontos'].sum().sort_values(by='Pontos', ascending=False)
+    
+    if not df.empty:
+        return df.groupby('Usuário', as_index=False)['Pontos'].sum().sort_values(by='Pontos', ascending=False)
+    return df
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
