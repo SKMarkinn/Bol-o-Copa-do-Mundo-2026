@@ -162,6 +162,13 @@ with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
     if st.button("Salvar Resultado Oficial", key="btn_admin"):
         registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
         st.success("Resultado registrado!")
+    st.divider()
+    st.subheader("⚠️ Zona de Perigo")
+if st.text_input("Senha de Adimin", type="password") == "Skcopa26@":
+    if st.button("🚨 Resetar Tudo (Palpites e Resultados)"):
+        db.reference('palpites').set({})
+        db.reference('resultados_oficiais').set({})
+        st.warning("Sistema limpo! Todos os dados de palpites e resultados foram removidos.")
 
 # --- 3. LOOP DOS JOGOS ---
 jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
