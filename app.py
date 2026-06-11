@@ -1,25 +1,19 @@
 import streamlit as st
 import pandas as pd
-import os
-import json
 import firebase_admin
 from firebase_admin import credentials, db
-from datetime import datetime, timedelta 
-import pytz                             
+from datetime import datetime, timedelta
+import pytz
 
-# Inicialização do Firebase via Variável de Ambiente (Render)
-if not firebase_admin._apps:
-    try:
-        # Carrega a string JSON da variável de ambiente e converte para dicionário Python
-        config_string = os.environ.get('FIREBASE_CONFIG_JSON')
-        firebase_config = json.loads(config_string)
-        
-        cred = credentials.Certificate(firebase_config)
-        firebase_admin.initialize_app(cred, {
-            'databaseURL': 'https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com/'
-        })
-    except Exception as e:
-        st.error(f"Erro ao inicializar Firebase: {e}")
+def registrar_palpite(grupo, jogo_id, t1, g1, t2, g2):
+    ref = db.reference(f'palpites/{grupo}/{jogo_id}')
+    ref.push({'time1': t1, 'gols1': g1, 'time2': t2, 'gols2': g2})
+
+def registrar_resultado_oficial(grupo, jogo_id, g1, g2):
+    ref = db.reference(f'resultados_oficiais/{grupo}/{jogo_id}')
+    ref.set({'g1': g1, 'g2': g2})
+# --- 1. CARREGAMENTO DOS DADOS ---
+# Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
     "Grupo A": ["México 🇲🇽", "África do Sul 🇿🇦", "Coreia do Sul 🇰🇷", "Rep. Tcheca 🇨🇿"],
     "Grupo B": ["Canadá 🇨🇦", "Bósnia e Herz. 🇧🇦", "Catar 🇶🇦", "Suíça 🇨🇭"],
@@ -34,7 +28,10 @@ grupos_oficiais = {
     "Grupo K": ["Portugal 🇵🇹", "RD Congo 🇨🇩", "Uzbequistão 🇺🇿", "Colômbia 🇨🇴"],
     "Grupo L": ["Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Croácia 🇭🇷", "Gana 🇬🇭", "Panamá 🇵🇦"]
 }
-agenda_oficial = {
+# (Substitua por como você carrega seus dados)
+if 'agenda_oficial' not in locals():
+    # Exemplo de carregamento, ajuste conforme seu código original
+   agenda_oficial = {
     "Grupo A": [
         {"id": "A1", "t1": "México 🇲🇽", "t2": "África do Sul 🇿🇦", "data": "11/06/2026", "hora": "16:00"},
         {"id": "A2", "t1": "Coreia do Sul 🇰🇷", "t2": "Rep. Tcheca 🇨🇿", "data": "11/06/2026", "hora": "23:00"},
@@ -130,84 +127,39 @@ agenda_oficial = {
         {"id": "L4", "t1": "Panamá 🇵🇦", "t2": "Croácia 🇭🇷", "data": "23/06/2026", "hora": "20:00"},
         {"id": "L5", "t1": "Panamá 🇵🇦", "t2": "Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿", "data": "27/06/2026", "hora": "18:00"},
         {"id": "L6", "t1": "Croácia 🇭🇷", "t2": "Gana 🇬🇭", "data": "27/06/2026", "hora": "18:00"}
-    ]
-}
-if 'tabelas_copa' not in st.session_state:
-    st.session_state.tabelas_copa = {
-        g: {t: {"pontos": 0, "vitorias": 0, "empates": 0, "derrotas": 0, "gols_pro": 0, "gols_sofridos": 0, "saldo": 0} 
-        for t in times} for g, times in grupos_oficiais.items()
-    }
-if 'jogos_registrados' not in st.session_state:
-    st.session_state.jogos_registrados = set()
-if 'mata_mata_32' not in st.session_state:
-    st.session_state.mata_mata_32 = []
-
-# 4. Funções de Lógica
-def registrar_palpite(grupo, jogo_id, time1, gols1, time2, gols2):
-    ref = db.reference(f'palpites/{grupo}/{jogo_id}')
-    ref.set({'t1': time1, 'g1': gols1, 't2': time2, 'g2': gols2, 'data': datetime.now().strftime("%d/%m/%Y %H:%M")})
-
-def registrar_jogo(grupo, time1, gols1, time2, gols2):
-    tabela = st.session_state.tabelas_copa[grupo]
-    # Lógica de pontos (se gols1 > gols2, etc...)
-    if gols1 > gols2:
-        tabela[time1]["pontos"] += 3
-        tabela[time1]["vitorias"] += 1
-        tabela[time2]["derrotas"] += 1
-    elif gols2 > gols1:
-        tabela[time2]["pontos"] += 3
-        tabela[time2]["vitorias"] += 1
-        tabela[time1]["derrotas"] += 1
-    else:
-        tabela[time1]["pontos"] += 1
-        tabela[time2]["pontos"] += 1
-        tabela[time1]["empates"] += 1
-        tabela[time2]["empates"] += 1
-    
-    tabela[time1]["gols_pro"] += gols1
-    tabela[time1]["gols_sofridos"] += gols2
-    tabela[time1]["saldo"] = tabela[time1]["gols_pro"] - tabela[time1]["gols_sofridos"]
-    tabela[time2]["gols_pro"] += gols2
-    tabela[time2]["gols_sofridos"] += gols1
-    tabela[time2]["saldo"] = tabela[time2]["gols_pro"] - tabela[time2]["gols_sofridos"]
-def registrar_resultado_oficial(grupo, jogo_id, gols1, gols2):
-    # Admin: insere resultado real
-    db.reference(f'resultados_oficiais/{grupo}/{jogo_id}').set({'g1': gols1, 'g2': gols2})
-    st.success("Resultado oficial registrado!")
-
-# 5. Interface
+           ]
 st.header("⚽ Fase de Grupos")
-grupo_selecionado = st.selectbox("Selecione o Grupo:", list(grupos_oficiais.keys()))
+grupo_selecionado = st.selectbox("Selecione o Grupo:", list(agenda_oficial.keys()))
 
+# --- 2. ÁREA DO ADMINISTRADOR (FORA DO LOOP) ---
 with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
-    # A área administrativa fica SOLTA, fora do if/else de trava
-    jogo_id_admin = st.text_input("ID do Jogo (ex: A1)")
+    jogo_id_admin = st.text_input("ID do Jogo (ex: A1)", key="admin_id")
     c_adm1, c_adm2 = st.columns(2)
-    g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0)
-    g_adm2 = c_adm2.number_input("Gols Time 2", min_value=0)
-    if st.button("Salvar Placar Oficial"):
+    g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0, key="admin_g1")
+    g_adm2 = c_adm2.number_input("Gols Time 2", min_value=0, key="admin_g2")
+    if st.button("Salvar Resultado Oficial", key="btn_admin"):
         registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
-        st.success("Resultado oficial registrado!")
-    jogo_id_admin = st.text_input("ID do Jogo (ex: A1)", key="admin_jogo_id")
-    c_adm1, c_adm2 = st.columns(2)
-    g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0)
-    g_adm2 = c_adm2.number_input("Gols Time 2", min_value=0)
-    if st.button("Salvar Placar Oficial"):
-        registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
+        st.success("Resultado registrado!")
+
+# --- 3. LOOP DOS JOGOS ---
 jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
+
 for jogo in jogos_do_grupo:
-    # 1. Montar a string de data/hora no formato que o código espera
-    data_hora_str = f"{jogo['data']} {jogo['hora']}:00" # Ex: "11/06/2026 16:00:00"
-    
-    # 2. Configurar o fuso e calcular a trava
+    # Lógica de Tempo
+    data_hora_str = f"{jogo['data']} {jogo['hora']}:00"
     brasilia_tz = pytz.timezone('America/Sao_Paulo')
     horario_jogo = datetime.strptime(data_hora_str, "%d/%m/%Y %H:%M:%S")
     agora = datetime.now(brasilia_tz).replace(tzinfo=None)
     limite_palpite = horario_jogo - timedelta(minutes=1)
 
     with st.expander(f"{jogo['t1']} vs {jogo['t2']} - 🕒 {jogo['data']} {jogo['hora']}"):
+        # Exibir resultado real se existir
+        res = db.reference(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
+        if res:
+            st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
+
+        # Bloqueio ou liberação de palpite
         if agora < limite_palpite:
-            # Formulário de Palpite
             g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
             g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
             
@@ -216,8 +168,3 @@ for jogo in jogos_do_grupo:
                 st.success("Palpite salvo!")
         else:
             st.error("🔒 Palpites encerrados!")
-
-        # Exibir resultado real (se existir)
-        res = db.reference(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
-        if res:
-            st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
