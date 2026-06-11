@@ -196,7 +196,7 @@ if 'agenda_oficial' not in locals():
         {"id": "L6", "t1": "Croácia 🇭🇷", "t2": "Gana 🇬🇭", "data": "27/06/2026", "hora": "18:00"}
      ]
    }
-st.header("Fase de Grupos ⚽")
+st.header("Fase de classificação⚽")
 # --- 2. ÁREA DO ADMINISTRADOR ---
 with st.expander("Área do Administrador ⚙️"):
     # O campo de senha entra aqui, DENTRO do expander
