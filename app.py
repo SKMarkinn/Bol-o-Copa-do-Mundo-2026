@@ -127,7 +127,7 @@ if 'agenda_oficial' not in locals():
         {"id": "L4", "t1": "Panamá 🇵🇦", "t2": "Croácia 🇭🇷", "data": "23/06/2026", "hora": "20:00"},
         {"id": "L5", "t1": "Panamá 🇵🇦", "t2": "Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿", "data": "27/06/2026", "hora": "18:00"},
         {"id": "L6", "t1": "Croácia 🇭🇷", "t2": "Gana 🇬🇭", "data": "27/06/2026", "hora": "18:00"}
-           ]
+     ]
    }
 st.header("⚽ Fase de Grupos")
 grupo_selecionado = st.selectbox("Selecione o Grupo:", list(agenda_oficial.keys()))
