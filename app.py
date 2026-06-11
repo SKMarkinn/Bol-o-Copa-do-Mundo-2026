@@ -47,35 +47,30 @@ def calcular_pontos(gols1_palpite, gols2_palpite, gols1_oficial, gols2_oficial):
     return 0  
     
 def gerar_ranking():
-    # Busca todos os dados no Firebase de uma vez
     palpites_db = db.reference('palpites').get()
     resultados_db = db.reference('resultados_oficiais').get()
     
-    # Se não houver palpites, retorna uma tabela vazia
-    if not palpites_db: 
-        return pd.DataFrame(columns=['Usuário', 'Pontos'])
+    if not palpites_db: return pd.DataFrame(columns=['Usuário', 'Pontos'])
     
     ranking = {}
     
-    # Percorre cada grupo e cada jogo salvo nos palpites
-    for grupo, jogos in palpites_db.items():
-        for jogo_id, lista_palpites in jogos.items():
-            # Só calcula pontos se o jogo já tiver um resultado oficial
-            if resultados_db and jogo_id in resultados_db:
-                res = resultados_db[jogo_id]
-                # Percorre cada usuário que deu palpite neste jogo
-                for usuario, dados in lista_palpites.items():
-                    if usuario not in ranking: 
-                        ranking[usuario] = 0
+    for grupo, usuarios_no_grupo in palpites_db.items():
+        # AQUI MUDAMOS: Agora o loop percorre os usuários diretamente dentro do grupo
+        for usuario, palpites_do_usuario in usuarios_no_grupo.items():
+            
+            # palpites_do_usuario é um dicionário onde a chave é o jogo_id
+            for jogo_id, palpite in palpites_do_usuario.items():
+                
+                # Verifica se existe resultado para este jogo
+                if resultados_db and grupo in resultados_db and jogo_id in resultados_db[grupo]:
+                    res = resultados_db[grupo][jogo_id]
                     
-                    # Usa a função de cálculo que criamos no Passo 1
-                    pts = calcular_pontos(dados['gols1'], dados['gols2'], res['g1'], res['g2'])
+                    if usuario not in ranking: ranking[usuario] = 0
+                    pts = calcular_pontos(palpite['gols1'], palpite['gols2'], res['g1'], res['g2'])
                     ranking[usuario] += pts
                         
-    # Transforma o dicionário em uma Tabela (DataFrame) e ordena
     df = pd.DataFrame(list(ranking.items()), columns=['Usuário', 'Pontos'])
-    df = df.groupby('Usuário', as_index=False)['Pontos'].sum()
-    return df.sort_values(by='Pontos', ascending=False)
+    return df.groupby('Usuário', as_index=False)['Pontos'].sum().sort_values(by='Pontos', ascending=False)
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
