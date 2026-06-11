@@ -217,37 +217,36 @@ jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
 st.write(f"DEBUG: Jogos carregados para {grupo_selecionado}: {len(jogos_do_grupo)}")
 
 for jogo in jogos_do_grupo:
-    # Lógica de Tempo
-    data_hora_str = f"{jogo['data']} {jogo['hora']}:00"
-    brasilia_tz = pytz.timezone('America/Sao_Paulo')
-    horario_jogo = datetime.strptime(data_hora_str, "%d/%m/%Y %H:%M:%S")
-    agora = datetime.now(brasilia_tz).replace(tzinfo=None)
-    limite_palpite = horario_jogo - timedelta(minutes=1)
+    try:
+        # Lógica de Tempo
+        data_hora_str = f"{jogo['data']} {jogo['hora']}:00"
+        brasilia_tz = pytz.timezone('America/Sao_Paulo')
+        horario_jogo = datetime.strptime(data_hora_str, "%d/%m/%Y %H:%M:%S")
+        agora = datetime.now(brasilia_tz).replace(tzinfo=None)
+        limite_palpite = horario_jogo - timedelta(minutes=1)
 
-with st.expander(f"{jogo['t1']} vs {jogo['t2']} - 🕒 {jogo['data']} {jogo['hora']}"):
-    
-    # Exibir resultado real se existir
-    res = db.reference(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
-    if res:
-        st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
-
-    # Bloqueio ou liberação de palpite
-    if agora < limite_palpite:
-        g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
-        g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
-        
-        # O campo de nome deve estar AQUI, dentro do expander
-        nome_usuario = st.text_input(f"Seu Nome/Nick:", key=f"user_{jogo['id']}")
-        
-        # Apenas um botão por jogo
-        if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
-            if nome_usuario:
-                registrar_palpite(nome_usuario, grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
-                st.success("Palpite salvo!")
+        # O EXPANDE DEVE ESTAR AQUI DENTRO
+        with st.expander(f"{jogo['t1']} vs {jogo['t2']} - 🕒 {jogo['data']} {jogo['hora']}"):
+            res = db.reference(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
+            if res:
+                st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
+            
+            # Bloqueio ou liberação
+            if agora < limite_palpite:
+                g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
+                g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
+                nome_usuario = st.text_input(f"Seu Nome/Nick:", key=f"user_{jogo['id']}")
+                if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
+                    if nome_usuario:
+                        registrar_palpite(nome_usuario, grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
+                        st.success("Palpite salvo!")
+                    else:
+                        st.warning("Por favor, digite seu nome antes de salvar.")
             else:
-                st.warning("Por favor, digite seu nome antes de salvar.")
-    else:
-        st.error("🔒 Palpites encerrados!")
+                st.error("🔒 Palpites encerrados!")
+
+    except Exception as e:
+        st.error(f"Erro no jogo {jogo.get('id')}: {e}")
 # --- EXIBIÇÃO DO RANKING NO FINAL DA PÁGINA ---
 st.divider()
 st.header("🏆 Classificação Geral")
