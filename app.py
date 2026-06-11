@@ -50,30 +50,36 @@ def gerar_ranking():
     palpites_db = db.reference('palpites').get()
     resultados_db = db.reference('resultados_oficiais').get()
     
-    if not palpites_db: return pd.DataFrame(columns=['Usuário', 'Pontos'])
+    # Se não houver palpites, retorna vazio
+    if not palpites_db: 
+        return pd.DataFrame()
     
     ranking = {}
     
-    # 1. Grupo
-    for grupo, jogos_no_grupo in palpites_db.items():
-        # 2. jogo_id (ex: A1)
-        for jogo_id, usuarios_no_jogo in jogos_no_grupo.items():
-            # 3. Usuario (ex: Josue)
-            for usuario, palpite in usuarios_no_jogo.items():
+    # 1. Percorre os grupos nos palpites
+    for grupo, jogos in palpites_db.items():
+        # 2. Percorre os IDs dos jogos dentro do grupo
+        for jogo_id, palpites_no_jogo in jogos.items():
+            
+            # Verifica se existe um resultado oficial correspondente para esse grupo e jogo
+            if resultados_db and grupo in resultados_db and jogo_id in resultados_db[grupo]:
+                res = resultados_db[grupo][jogo_id]
                 
-                # Verifica se existe resultado para este jogo
-                if resultados_db and grupo in resultados_db and jogo_id in resultados_db[grupo]:
-                    res = resultados_db[grupo][jogo_id]
+                # 3. Percorre os usuários que deram palpite nesse jogo
+                for usuario, dados in palpites_no_jogo.items():
+                    if usuario not in ranking:
+                        ranking[usuario] = 0
                     
-                    if usuario not in ranking: ranking[usuario] = 0
-                    pts = calcular_pontos(palpite['gols1'], palpite['gols2'], res['g1'], res['g2'])
+                    # Calcula e soma os pontos
+                    pts = calcular_pontos(dados['gols1'], dados['gols2'], res['g1'], res['g2'])
                     ranking[usuario] += pts
                         
+    # Cria o DataFrame e trata o resultado
+    if not ranking:
+        return pd.DataFrame()
+        
     df = pd.DataFrame(list(ranking.items()), columns=['Usuário', 'Pontos'])
-    
-    if not df.empty:
-        return df.groupby('Usuário', as_index=False)['Pontos'].sum().sort_values(by='Pontos', ascending=False)
-    return df
+    return df.sort_values(by='Pontos', ascending=False)
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
