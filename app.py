@@ -198,7 +198,7 @@ if 'agenda_oficial' not in locals():
    }
 st.header("Fase de Grupos ⚽")
 # --- 2. ÁREA DO ADMINISTRADOR ---
-with st.expander("Área do Administrador ⚙️)"):
+with st.expander("Área do Administrador ⚙️"):
     # O campo de senha entra aqui, DENTRO do expander
     senha_admin = st.text_input("Senha de Admin", type="password", key="admin_password")
     
@@ -238,7 +238,7 @@ for jogo in jogos_do_grupo:
         limite_palpite = horario_jogo - timedelta(minutes=1)
 
         # O EXPANDE DEVE ESTAR AQUI DENTRO
-        with st.expander(f"{jogo['t1']} vs {jogo['t2']} - {jogo['data']} 🕒 {jogo['hora']}"):
+        with st.expander(f"{jogo['t1']} vs {jogo['t2']} - {jogo['data']} {jogo['hora']} 🕒"):
             res = db.reference(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
             if res:
                 st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
@@ -255,7 +255,7 @@ for jogo in jogos_do_grupo:
                     else:
                         st.warning("Por favor, digite seu nome antes de salvar.")
             else:
-                st.error("🔒Palpites encerrados!🔒")
+                st.error("🔒Palpites encerrados!")
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
