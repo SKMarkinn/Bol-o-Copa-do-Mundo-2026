@@ -179,28 +179,33 @@ def registrar_resultado_oficial(grupo, jogo_id, gols1, gols2):
 st.header("⚽ Fase de Grupos")
 grupo_selecionado = st.selectbox("Selecione o Grupo:", list(grupos_oficiais.keys()))
 
-# Área de Admin (Opcional)
 with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
-    brasilia_tz = pytz.timezone('America/Sao_Paulo')
-    horario_jogo = datetime.strptime(jogo['horario_inicio'], "%Y-%m-%d %H:%M:%S")
-    agora = datetime.now(brasilia_tz).replace(tzinfo=None)
-    limite_palpite = horario_jogo - timedelta(minutes=1)
-    
-    st.write(f"🕒 Início do jogo: {jogo['horario_inicio']}")
-    
-    if agora < limite_palpite:
-        # O formulário só aparece se ainda não chegou no limite
-        g1_palpite = st.number_input(f"Gols {jogo['time1']}", min_value=0, key=f"g1_{jogo['id']}")
-        g2_palpite = st.number_input(f"Gols {jogo['time2']}", min_value=0, key=f"g2_{jogo['id']}")
-        
-        if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
-            # Aqui você chama a sua função que registra o palpite no Firebase
-            # Lembre-se de passar os parâmetros corretos aqui
-            registrar_palpite(grupo_selecionado, jogo['id'], jogo['time1'], g1_palpite, jogo['time2'], g2_palpite)
-            st.success("Palpite salvo com sucesso!")
-    else:
-        # Se passou do limite (1 minuto antes), bloqueia
-        st.error("🔒 Palpites encerrados para este jogo!")
+    # A área administrativa fica SOLTA, fora do if/else de trava
+    jogo_id_admin = st.text_input("ID do Jogo (ex: A1)")
+    c_adm1, c_adm2 = st.columns(2)
+    g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0)
+    g_adm2 = c_adm2.number_input("Gols Time 2", min_value=0)
+    if st.button("Salvar Placar Oficial"):
+        registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
+        st.success("Resultado oficial registrado!")
+
+# --- AQUI COMEÇA A TRAVA DE TEMPO ---
+brasilia_tz = pytz.timezone('America/Sao_Paulo')
+# Certifique-se que o campo existe no Firebase ou monte a string:
+data_hora_str = f"{jogo['data']} {jogo['hora']}:00" 
+horario_jogo = datetime.strptime(data_hora_str, "%d/%m/%Y %H:%M:%S")
+agora = datetime.now(brasilia_tz).replace(tzinfo=None)
+limite_palpite = horario_jogo - timedelta(minutes=1)
+
+if agora < limite_palpite:
+    # Lógica de palpite do usuário (aparece só antes do jogo)
+    g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
+    g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
+    if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
+        registrar_palpite(grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
+        st.success("Palpite salvo!")
+else:
+    st.error("🔒 Palpites encerrados!")
     jogo_id_admin = st.text_input("ID do Jogo (ex: A1)")
     c_adm1, c_adm2 = st.columns(2)
     g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0)
