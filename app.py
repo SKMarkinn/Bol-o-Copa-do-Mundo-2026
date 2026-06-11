@@ -196,11 +196,9 @@ if 'agenda_oficial' not in locals():
         {"id": "L6", "t1": "Croácia 🇭🇷", "t2": "Gana 🇬🇭", "data": "27/06/2026", "hora": "18:00"}
      ]
    }
-st.header("⚽ Fase de Grupos")
-grupo_selecionado = st.selectbox("Selecione o Grupo:", list(agenda_oficial.keys()))
-
+st.header("Fase de Grupos ⚽")
 # --- 2. ÁREA DO ADMINISTRADOR ---
-with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
+with st.expander("Área do Administrador ⚙️)"):
     # O campo de senha entra aqui, DENTRO do expander
     senha_admin = st.text_input("Senha de Admin", type="password", key="admin_password")
     
@@ -217,15 +215,15 @@ with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
             st.success("Resultado registrado com sucesso!")
             
         st.divider()
-        st.subheader("⚠️ Zona de Perigo")
-        if st.button("🚨 Resetar Tudo (Palpites e Resultados)"):
+        st.subheader("Zona de Perigo ⚠️")
+        if st.button("Resetar Tudo (Palpites e Resultados) 🚨"):
             db.reference('palpites').set({})
             db.reference('resultados_oficiais').set({})
             st.warning("Sistema limpo! Todos os dados foram removidos.")
     else:
         # Mensagem que aparece enquanto a senha não é digitada
         st.info("🔒 Digite a senha correta para acessar as ferramentas de administrador.")
-
+grupo_selecionado = st.selectbox("Selecione o Grupo:", list(agenda_oficial.keys()))
 # --- 3. LOOP DOS JOGOS ---
 jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
 # st.write(f"DEBUG: Jogos carregados para {grupo_selecionado}: {len(jogos_do_grupo)}")
@@ -240,7 +238,7 @@ for jogo in jogos_do_grupo:
         limite_palpite = horario_jogo - timedelta(minutes=1)
 
         # O EXPANDE DEVE ESTAR AQUI DENTRO
-        with st.expander(f"{jogo['t1']} vs {jogo['t2']} - 🕒 {jogo['data']} {jogo['hora']}"):
+        with st.expander(f"{jogo['t1']} vs {jogo['t2']} - {jogo['data']} 🕒 {jogo['hora']}"):
             res = db.reference(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
             if res:
                 st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
@@ -257,13 +255,13 @@ for jogo in jogos_do_grupo:
                     else:
                         st.warning("Por favor, digite seu nome antes de salvar.")
             else:
-                st.error("🔒 Palpites encerrados!")
+                st.error("🔒Palpites encerrados!🔒")
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
 # --- EXIBIÇÃO DO RANKING (FINAL E LIMPO) ---
 st.divider()
-st.header("🏆 Classificação Copástica")
+st.header("Classificação Copástica 🏆")
 
 # 1. Gera o ranking
 df_ranking = gerar_ranking()
