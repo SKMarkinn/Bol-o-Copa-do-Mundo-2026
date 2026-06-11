@@ -246,17 +246,21 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-# --- DEBUG DO RANKING ---
 # --- EXIBIÇÃO DO RANKING NO FINAL DA PÁGINA ---
 st.divider()
 st.header("🏆 Classificação Copástica")
 
-# Chamamos a função diretamente
+# Chama a função
 df_ranking = gerar_ranking()
 
-# Exibição personalizada
-if not df_ranking.empty:
-    # use_container_width=True faz a tabela ocupar a largura da tela (fica mais bonito)
+# DEBUG: Verifica se o DataFrame foi criado corretamente
+if df_ranking is not None and not df_ranking.empty:
+    # Ajusta os nomes das colunas para ficar profissional
+    df_ranking.columns = ['Participante', 'Total de Pontos']
+    
+    # Exibe a tabela de forma elegante
     st.dataframe(df_ranking, use_container_width=True, hide_index=True)
 else:
-    st.info("Ainda não há palpites computados.")
+    # Se cair aqui, é porque o DataFrame está vazio ou a função não retornou nada
+    st.info("Ainda não há palpites computados ou resultados oficiais registrados.")
+    # st.write("DEBUG: O DataFrame está vazio ou None.") # Descomente se quiser confirmar
