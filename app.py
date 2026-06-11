@@ -214,6 +214,7 @@ if st.text_input("Senha de Adimin", type="password") == "Skcopa26@":
 
 # --- 3. LOOP DOS JOGOS ---
 jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
+st.write(f"DEBUG: Jogos carregados para {grupo_selecionado}: {len(jogos_do_grupo)}")
 
 for jogo in jogos_do_grupo:
     # Lógica de Tempo
