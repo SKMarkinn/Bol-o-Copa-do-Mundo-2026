@@ -252,20 +252,23 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-# --- EXIBIÇÃO DO RANKING (FINAL E LIMPO) ---
+# --- DEBUG TÉCNICO ---
 st.divider()
-st.header("🏆 Classificação Copástica")
+st.header("🔍 Diagnóstico de Ranking")
 
-# 1. Gera o ranking
-df_ranking = gerar_ranking()
+palpites_db = db.reference('palpites').get()
+resultados_db = db.reference('resultados_oficiais').get()
 
-# 2. Exibe se houver dados
-if not df_ranking.empty:
-    # Personaliza os nomes das colunas
-    df_ranking.columns = ['Participante', 'Total de Pontos']
-    
-    # Exibe a tabela profissional
-    st.dataframe(df_ranking, use_container_width=True, hide_index=True)
+if not palpites_db:
+    st.write("Erro: A pasta 'palpites' está vazia ou não existe no Firebase.")
+elif not resultados_db:
+    st.write("Erro: A pasta 'resultados_oficiais' está vazia ou não existe.")
 else:
-    # Caso esteja vazio
-    st.info("Ainda não há palpites computados.")
+    # Vamos ver se as chaves (Grupos e IDs) batem
+    st.write("Palpites encontrados nos Grupos:", list(palpites_db.keys()))
+    st.write("Resultados encontrados nos Grupos:", list(resultados_db.keys()))
+    
+    # Executa a função
+    df = gerar_ranking()
+    st.write("O DataFrame gerado pela função tem colunas:", df.columns.tolist() if not df.empty else "Vazio")
+    st.write("Conteúdo do DataFrame:", df)
