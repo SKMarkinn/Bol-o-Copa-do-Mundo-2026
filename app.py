@@ -216,7 +216,7 @@ with st.expander("Área do Administrador ⚙️"):
             
         st.divider()
         st.subheader("Zona de Perigo ⚠️")
-        if st.button("Resetar Tudo (Palpites e Resultados) 🚨"):
+        if st.button("🚨 Resetar Tudo (Palpites e Resultados)"):
             db.reference('palpites').set({})
             db.reference('resultados_oficiais').set({})
             st.warning("Sistema limpo! Todos os dados foram removidos.")
