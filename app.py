@@ -1,9 +1,12 @@
+import streamlit as st
 import os
 import json
+import pandas as pd
 import firebase_admin
 from firebase_admin import credentials, db
+import pytz
+from datetime import datetime, timedelta
 
-# --- INICIALIZAÇÃO VIA VARIÁVEIS DE AMBIENTE ---
 if not firebase_admin._apps:
     # Monta o dicionário de credenciais a partir das variáveis do Render
     cred_dict = {
