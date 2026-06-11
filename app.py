@@ -182,8 +182,6 @@ grupo_selecionado = st.selectbox("Selecione o Grupo:", list(grupos_oficiais.keys
 # Área de Admin (Opcional)
 with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
     brasilia_tz = pytz.timezone('America/Sao_Paulo')
-    # Certifique-se que o campo no seu banco de dados se chama 'horario_inicio'
-    # O formato deve ser: "2026-06-11 16:00:00"
     horario_jogo = datetime.strptime(jogo['horario_inicio'], "%Y-%m-%d %H:%M:%S")
     agora = datetime.now(brasilia_tz).replace(tzinfo=None)
     limite_palpite = horario_jogo - timedelta(minutes=1)
