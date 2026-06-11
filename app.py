@@ -229,17 +229,24 @@ for jogo in jogos_do_grupo:
         if res:
             st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
 
-        # Bloqueio ou liberação de palpite
-        if agora < limite_palpite:
-            g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
-            g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
-            
-            if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
-                registrar_palpite(grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
-                st.success("Palpite salvo!")
+        # --- Bloqueio ou liberação de palpite ---
+if agora < limite_palpite:
+    g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
+    g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
+    
+    # PEÇA O NOME ANTES DO BOTÃO
+    nome_usuario = st.text_input(f"Seu Nome/Nick:", key=f"user_{jogo['id']}")
+    
+    # UM ÚNICO BOTÃO
+    if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
+        if nome_usuario:
+            # CHAME A FUNÇÃO COM OS 7 PARÂMETROS CORRETOS
+            registrar_palpite(nome_usuario, grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
+            st.success("Palpite salvo!")
         else:
-            st.error("🔒 Palpites encerrados!")
-
+            st.warning("Por favor, digite seu nome antes de salvar.")
+else:
+    st.error("🔒 Palpites encerrados!")
 # --- EXIBIÇÃO DO RANKING NO FINAL DA PÁGINA ---
 st.divider()
 st.header("🏆 Classificação Geral")
