@@ -54,31 +54,30 @@ def gerar_ranking():
     
     ranking = {}
     
-    # 1. Percorre os Grupos (ex: "Grupo A")
-    for grupo, jogos_no_grupo in palpites_db.items():
+    # Percorre grupos
+    for grupo, jogos in palpites_db.items():
         if grupo not in resultados_db: continue
         
-        # 2. Percorre os Jogos (ex: "A1")
-        for jogo_id, usuarios_no_jogo in jogos_no_grupo.items():
+        # Para cada jogo no grupo
+        for jogo_id, usuarios in jogos.items():
             
-            # Verifica se o jogo existe nos resultados oficiais
-            if jogo_id in resultados_db[grupo]:
-                res = resultados_db[grupo][jogo_id]
-                
-                # 3. Percorre os Usuários (ex: "Josue")
-                for usuario, palpite in usuarios_no_jogo.items():
+            # Vamos ser tolerantes: procurar o resultado ignorando espaços ou maiúsculas
+            resultado_encontrado = None
+            for r_id, r_dados in resultados_db[grupo].items():
+                if str(r_id).strip().lower() == str(jogo_id).strip().lower():
+                    resultado_encontrado = r_dados
+                    break
+            
+            if resultado_encontrado:
+                # Se achou o resultado, soma os pontos de todos os usuários
+                for usuario, palpite in usuarios.items():
                     if usuario not in ranking: ranking[usuario] = 0
-                    
-                    # Calcula pontos
                     pts = calcular_pontos(palpite.get('gols1',0), palpite.get('gols2',0), 
-                                          res.get('g1',0), res.get('g2',0))
+                                          resultado_encontrado.get('g1',0), resultado_encontrado.get('g2',0))
                     ranking[usuario] += pts
-    
-    # Cria o DataFrame
-    if not ranking: return pd.DataFrame(columns=['Usuário', 'Pontos'])
-    
+                        
     df = pd.DataFrame(list(ranking.items()), columns=['Usuário', 'Pontos'])
-    return df.groupby('Usuário', as_index=False)['Pontos'].sum().sort_values(by='Pontos', ascending=False)
+    return df.sort_values(by='Pontos', ascending=False)
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
