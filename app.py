@@ -26,13 +26,55 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred, {
         'databaseURL': os.environ.get("FIREBASE_DATABASE_URL")
     })
-def registrar_palpite(grupo, jogo_id, t1, g1, t2, g2):
+def registrar_palpite(usuario, grupo, jogo_id, t1, g1, t2, g2):
     ref = db.reference(f'palpites/{grupo}/{jogo_id}')
-    ref.push({'time1': t1, 'gols1': g1, 'time2': t2, 'gols2': g2})
+    ref.child(usuario).set({'gols1': g1, 'gols2': g2})
 
 def registrar_resultado_oficial(grupo, jogo_id, g1, g2):
     ref = db.reference(f'resultados_oficiais/{grupo}/{jogo_id}')
     ref.set({'g1': g1, 'g2': g2})
+
+def calcular_pontos(gols1_palpite, gols2_palpite, gols1_oficial, gols2_oficial):
+    if gols1_palpite == gols1_oficial and gols2_palpite == gols2_oficial:
+        return 10  # Pontos por placar exato
+    
+    vencedor_palpite = (gols1_palpite > gols2_palpite) if gols1_palpite != gols2_palpite else "empate"
+    vencedor_oficial = (gols1_oficial > gols2_oficial) if gols1_oficial != gols2_oficial else "empate"
+    
+    if vencedor_palpite == vencedor_oficial:
+        return 5
+        
+    return 0  
+    
+def gerar_ranking():
+    # Busca todos os dados no Firebase de uma vez
+    palpites_db = db.reference('palpites').get()
+    resultados_db = db.reference('resultados_oficiais').get()
+    
+    # Se não houver palpites, retorna uma tabela vazia
+    if not palpites_db: 
+        return pd.DataFrame(columns=['Usuário', 'Pontos'])
+    
+    ranking = {}
+    
+    # Percorre cada grupo e cada jogo salvo nos palpites
+    for grupo, jogos in palpites_db.items():
+        for jogo_id, lista_palpites in jogos.items():
+            # Só calcula pontos se o jogo já tiver um resultado oficial
+            if resultados_db and jogo_id in resultados_db:
+                res = resultados_db[jogo_id]
+                # Percorre cada usuário que deu palpite neste jogo
+                for usuario, dados in lista_palpites.items():
+                    if usuario not in ranking: 
+                        ranking[usuario] = 0
+                    
+                    # Usa a função de cálculo que criamos no Passo 1
+                    pts = calcular_pontos(dados['gols1'], dados['gols2'], res['g1'], res['g2'])
+                    ranking[usuario] += pts
+                        
+    # Transforma o dicionário em uma Tabela (DataFrame) e ordena
+    df = pd.DataFrame(list(ranking.items()), columns=['Usuário', 'Pontos'])
+    return df.sort_values(by='Pontos', ascending=False)
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
@@ -197,3 +239,20 @@ for jogo in jogos_do_grupo:
                 st.success("Palpite salvo!")
         else:
             st.error("🔒 Palpites encerrados!")
+
+# --- EXIBIÇÃO DO RANKING NO FINAL DA PÁGINA ---
+st.divider()
+st.header("🏆 Classificação Geral")
+
+# Verifica se existem resultados oficiais no banco de dados
+if db.reference('resultados_oficiais').get():
+    # Chama a função que criamos no Passo 2
+    df_ranking = gerar_ranking()
+    
+    # Exibe a tabela se ela não estiver vazia
+    if not df_ranking.empty:
+        st.table(df_ranking)
+    else:
+        st.write("Ainda não há palpites computados.")
+else:
+    st.info("O ranking será exibido após o registro do primeiro resultado oficial.")
