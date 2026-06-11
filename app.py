@@ -194,7 +194,7 @@ with st.expander("⚙️ Área do Administrador (Registrar Resultado Real)"):
     g_adm2 = c_adm2.number_input("Gols Time 2", min_value=0)
     if st.button("Salvar Placar Oficial"):
         registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
-    jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
+jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
 for jogo in jogos_do_grupo:
     # 1. Montar a string de data/hora no formato que o código espera
     data_hora_str = f"{jogo['data']} {jogo['hora']}:00" # Ex: "11/06/2026 16:00:00"
