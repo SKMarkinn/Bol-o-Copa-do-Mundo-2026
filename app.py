@@ -95,48 +95,47 @@ def gerar_ranking():
     if df.empty: return df
     return df.sort_values(by='Pontos', ascending=False)
 
-def exibir_card_jogo(jogo_id, time1, time2, gols1=None, gols2=None, editavel=False):
-    """
-    Cria um card visual para o jogo. 
-    Se editavel=True, mostra inputs. Se False, mostra apenas o placar.
-    """
-    with st.container(border=True):
-        col1, col2, col3 = st.columns([2, 1, 2])
-        col1.markdown(f"**{time1}**")
-        col2.write("vs")
-        col3.markdown(f"**{time2}**")
+def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
+    # 1. VALIDAÇÃO DE LOGIN (Garante que ele sabe quem é o usuário)
+    if 'nick' not in st.session_state or st.session_state.nick is None:
+        st.warning("⚠️ Faça login no menu lateral para participar!")
+        return # Para a execução aqui e não mostra o jogo sem login
+
+    # 2. SE O JOGO JÁ TEM RESULTADO (Força o modo de exibição de Aura)
+    res_oficial = resultados_oficiais.get(grupo_selecionado, {}).get(jogo_id)
+    if res_oficial:
+        editavel = False # O jogo já acabou, não pode mais editar
+
+    # 3. INTERFACE
+    st.write(f"**{time1} vs {time2}**")
+    
+    if editavel:
+        # --- BLOCO DE PALPITE ---
+        g1 = st.number_input(f"Gols {time1}", min_value=0, key=f"g1_{jogo_id}")
+        g2 = st.number_input(f"Gols {time2}", min_value=0, key=f"g2_{jogo_id}")
         
-        if editavel:
-            # Inputs para a aba de Jogos Futuros
-            c_input1, c_input2 = st.columns(2)
-            g1 = c_input1.number_input("Gols T1", min_value=0, key=f"p1_{jogo_id}")
-            g2 = c_input2.number_input("Gols T2", min_value=0, key=f"p2_{jogo_id}")
-            if st.button("Confirmar Palpite", key=f"btn_{jogo_id}"):
-                registrar_palpite(st.session_state.nick, grupo_selecionado, jogo_id, time1, time2, g1, g2)
-                st.success(f"Palpite de {st.session_state.nick} salvo!")
-        else:
-            res_grupo = resultados_oficiais.get(grupo_selecionado, {})
-            jogo_res = res_grupo.get(jogo_id) if res_grupo else None
-            meu_palpite = db.child("palpites").child(st.session_state.nick).child(grupo_selecionado).child(jogo_id).get().val()
-            
-            if jogo_res:
-                st.info(f"Resultado Real: {jogo_res['g1']} x {jogo_res['g2']}")
-                
-                if meu_palpite:
-                    st.write(f"Seu palpite: **{meu_palpite['gols1']} x {meu_palpite['gols2']}**")
-                    
-                    # 3. Lógica de Feedback (Aura)
-                    g1_p, g2_p = int(meu_palpite['gols1']), int(meu_palpite['gols2'])
+        if st.button("Confirmar Palpite", key=f"btn_{jogo_id}"):
+            registrar_palpite(st.session_state.nick, grupo_selecionado, jogo_id, g1, g2)
+            st.success(f"Palpite de {st.session_state.nick} salvo!")
+            st.rerun() # Atualiza a tela para mostrar o resultado
+    else:
+        # --- BLOCO DE AURA ---
+        st.info(f"Resultado Real: {res_oficial['g1']} x {res_oficial['g2']}")
+        meu_palpite = db.child("palpites").child(st.session_state.nick).child(grupo_selecionado).child(jogo_id).get().val()
+        
+        if meu_palpite:
+            st.write(f"Seu palpite: **{meu_palpite['gols1']} x {meu_palpite['gols2']}**")
+            g1_p, g2_p = int(meu_palpite['gols1']), int(meu_palpite['gols2'])
                     g1_o, g2_o = int(jogo_res['g1']), int(jogo_res['g2'])
                     
-                    if g1_p == g1_o and g2_p == g2_o:
+            if g1_p == g1_o and g2_p == g2_o:
                         st.success("Acertou em cheio! +1000 de Aura 🏆")
-                    elif (g1_p > g2_p and g1_o > g2_o) or (g1_p < g2_p and g1_o < g2_o) or (g1_p == g2_p and g1_o == g2_o):
+            elif (g1_p > g2_p and g1_o > g2_o) or (g1_p < g2_p and g1_o < g2_o) or (g1_p == g2_p and g1_o == g2_o):
                         st.warning("Parabéns! Você acertou o vencedor! 📈")
-                    else:
-                        st.error("Sobrou nada hein! 💀")
-                else:
-                    st.warning("Você não registrou palpite para este jogo.")
+            else:
+                st.error("Sobrou nada hein! 💀")            
+        else:
+            st.warning("Você não registrou palpite.")
             else:
                 st.write("Aguardando resultado oficial...")
 # --- 1. CARREGAMENTO DOS DADOS ---
