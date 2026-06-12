@@ -122,102 +122,102 @@ grupos_oficiais = {
 if 'agenda_oficial' not in locals():
     # Exemplo de carregamento, ajuste conforme seu código original
    agenda_oficial = {
-    "Grupo A": [
+    "Grupo A": {
         {"id": "A1", "t1": "México 🇲🇽", "t2": "África do Sul 🇿🇦", "data": "11/06/2026", "hora": "16:00"},
         {"id": "A2", "t1": "Coreia do Sul 🇰🇷", "t2": "Rep. Tcheca 🇨🇿", "data": "11/06/2026", "hora": "23:00"},
         {"id": "A3", "t1": "México 🇲🇽", "t2": "Coreia do Sul 🇰🇷", "data": "18/06/2026", "hora": "22:00"},
         {"id": "A4", "t1": "Rep. Tcheca 🇨🇿", "t2": "África do Sul 🇿🇦", "data": "18/06/2026", "hora": "13:00"},
         {"id": "A5", "t1": "Rep. Tcheca 🇨🇿", "t2": "México 🇲🇽", "data": "24/06/2026", "hora": "22:00"},
         {"id": "A6", "t1": "África do Sul 🇿🇦", "t2": "Coreia do Sul 🇰🇷", "data": "24/06/2026", "hora": "22:00"}
-    ],
-    "Grupo B": [
+    },
+    "Grupo B": {
         {"id": "B1", "t1": "Canadá 🇨🇦", "t2": "Bósnia e Herz. 🇧🇦", "data": "12/06/2026", "hora": "16:00"},
         {"id": "B2", "t1": "Catar 🇶🇦", "t2": "Suíça 🇨🇭", "data": "13/06/2026", "hora": "16:00"},
         {"id": "B3", "t1": "Canadá 🇨🇦", "t2": "Catar 🇶🇦", "data": "18/06/2026", "hora": "19:00"},
         {"id": "B4", "t1": "Suíça 🇨🇭", "t2": "Bósnia e Herz. 🇧🇦", "data": "18/06/2026", "hora": "18:00"},
         {"id": "B5", "t1": "Suíça 🇨🇭", "t2": "Canadá 🇨🇦", "data": "24/06/2026", "hora": "16:00"},
         {"id": "B6", "t1": "Bósnia e Herz. 🇧🇦", "t2": "Catar 🇶🇦", "data": "24/06/2026", "hora": "16:00"}
-    ],
-    "Grupo C": [
+    },
+    "Grupo C": {
         {"id": "C1", "t1": "Brasil 🇧🇷", "t2": "Marrocos 🇲🇦", "data": "13/06/2026", "hora": "19:00"},
         {"id": "C2", "t1": "Haiti 🇭🇹", "t2": "Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿", "data": "13/06/2026", "hora": "22:00"},
         {"id": "C3", "t1": "Brasil 🇧🇷", "t2": "Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿", "data": "24/06/2026", "hora": "19:00"},
         {"id": "C4", "t1": "Marrocos 🇲🇦", "t2": "Haiti 🇭🇹", "data": "24/06/2026", "hora": "19:00"},
         {"id": "C5", "t1": "Haiti 🇭🇹", "t2": "Brasil 🇧🇷", "data": "19/06/2026", "hora": "21:30"},
         {"id": "C6", "t1": "Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿", "t2": "Marrocos 🇲🇦", "data": "19/06/2026", "hora": "19:00"}
-    ],
-    "Grupo D": [
+    },
+    "Grupo D": {
         {"id": "D1", "t1": "Estados Unidos 🇺🇸", "t2": "Paraguai 🇵🇾", "data": "12/06/2026", "hora": "22:00"},
         {"id": "D2", "t1": "Austrália 🇦🇺", "t2": "Turquia 🇹🇷", "data": "14/06/2026", "hora": "01:00"},
         {"id": "D3", "t1": "Estados Unidos 🇺🇸", "t2": "Austrália 🇦🇺", "data": "19/06/2026", "hora": "16:00"},
         {"id": "D4", "t1": "Turquia 🇹🇷", "t2": "Paraguai 🇵🇾", "data": "20/06/2026", "hora": "00:00"},
         {"id": "D5", "t1": "Turquia 🇹🇷", "t2": "Estados Unidos 🇺🇸", "data": "25/06/2026", "hora": "23:00"},
         {"id": "D6", "t1": "Paraguai 🇵🇾", "t2": "Austrália 🇦🇺", "data": "25/06/2026", "hora": "23:00"}
-    ],
-    "Grupo E": [
+    },
+    "Grupo E": {
         {"id": "E1", "t1": "Alemanha 🇩🇪", "t2": "Curaçao 🇨🇼", "data": "14/06/2026", "hora": "14:00"},
         {"id": "E2", "t1": "Costa do Marfim 🇨🇮", "t2": "Equador 🇪🇨", "data": "14/06/2026", "hora": "20:00"},
         {"id": "E3", "t1": "Alemanha 🇩🇪", "t2": "Costa do Marfim 🇨🇮", "data": "20/06/2026", "hora": "17:00"},
         {"id": "E4", "t1": "Equador 🇪🇨", "t2": "Curaçao 🇨🇼", "data": "20/06/2026", "hora": "21:00"},
         {"id": "E5", "t1": "Equador 🇪🇨", "t2": "Alemanha 🇩🇪", "data": "25/06/2026", "hora": "17:00"},
         {"id": "E6", "t1": "Curaçao 🇨🇼", "t2": "Costa do Marfim 🇨🇮", "data": "25/06/2026", "hora": "17:00"}
-    ],
-    "Grupo F": [
+    },
+    "Grupo F": {
         {"id": "F1", "t1": "Holanda 🇳🇱", "t2": "Japão 🇯🇵", "data": "14/06/2026", "hora": "17:00"},
         {"id": "F2", "t1": "Suécia 🇸🇪", "t2": "Tunísia 🇹🇳", "data": "14/06/2026", "hora": "23:00"},
         {"id": "F3", "t1": "Holanda 🇳🇱", "t2": "Suécia 🇸🇪", "data": "20/06/2026", "hora": "14:00"},
         {"id": "F4", "t1": "Tunísia 🇹🇳", "t2": "Japão 🇯🇵", "data": "21/06/2026", "hora": "01:00"},
         {"id": "F5", "t1": "Tunísia 🇹🇳", "t2": "Holanda 🇳🇱", "data": "25/06/2026", "hora": "20:00"},
         {"id": "F6", "t1": "Japão 🇯🇵", "t2": "Suécia 🇸🇪", "data": "25/06/2026", "hora": "20:00"}
-    ],
-    "Grupo G": [
+    },
+    "Grupo G": {
         {"id": "G1", "t1": "Bélgica 🇧🇪", "t2": "Egito 🇪🇬", "data": "15/06/2026", "hora": "16:00"},
         {"id": "G2", "t1": "Irã 🇮🇷", "t2": "Nova Zelândia 🇳🇿", "data": "15/06/2026", "hora": "22:00"},
         {"id": "G3", "t1": "Bélgica 🇧🇪", "t2": "Irã 🇮🇷", "data": "21/06/2026", "hora": "16:00"},
         {"id": "G4", "t1": "Nova Zelândia 🇳🇿", "t2": "Egito 🇪🇬", "data": "21/06/2026", "hora": "22:00"},
         {"id": "G5", "t1": "Nova Zelândia 🇳🇿", "t2": "Bélgica 🇧🇪", "data": "27/06/2026", "hora": "00:00"},
         {"id": "G6", "t1": "Egito 🇪🇬", "t2": "Irã 🇮🇷", "data": "27/06/2026", "hora": "00:00"}
-    ],
-    "Grupo H": [
+    },
+    "Grupo H": {
         {"id": "H1", "t1": "Espanha 🇪🇸", "t2": "Cabo Verde 🇨🇻", "data": "15/06/2026", "hora": "13:00"},
         {"id": "H2", "t1": "Arábia Saudita 🇸🇦", "t2": "Uruguai 🇺🇾", "data": "15/06/2026", "hora": "19:00"},
         {"id": "H3", "t1": "Espanha 🇪🇸", "t2": "Arábia Saudita 🇸🇦", "data": "21/06/2026", "hora": "13:00"},
         {"id": "H4", "t1": "Uruguai 🇺🇾", "t2": "Cabo Verde 🇨🇻", "data": "21/06/2026", "hora": "19:00"},
         {"id": "H5", "t1": "Uruguai 🇺🇾", "t2": "Espanha 🇪🇸", "data": "26/06/2026", "hora": "21:00"},
         {"id": "H6", "t1": "Cabo Verde 🇨🇻", "t2": "Arábia Saudita 🇸🇦", "data": "26/06/2026", "hora": "21:00"}
-    ],
-    "Grupo I": [
+    },
+    "Grupo I": {
         {"id": "I1", "t1": "França 🇫🇷", "t2": "Senegal 🇸🇳", "data": "16/06/2026", "hora": "16:00"},
         {"id": "I2", "t1": "Iraque 🇮🇶", "t2": "Noruega 🇳🇴", "data": "16/06/2026", "hora": "19:00"},
         {"id": "I3", "t1": "França 🇫🇷", "t2": "Iraque 🇮🇶", "data": "22/06/2026", "hora": "18:00"},
         {"id": "I4", "t1": "Noruega 🇳🇴", "t2": "Senegal 🇸🇳", "data": "22/06/2026", "hora": "21:00"},
         {"id": "I5", "t1": "Noruega 🇳🇴", "t2": "França 🇫🇷", "data": "26/06/2026", "hora": "16:00"},
         {"id": "I6", "t1": "Senegal 🇸🇳", "t2": "Iraque 🇮🇶", "data": "26/06/2026", "hora": "16:00"}
-    ],
-    "Grupo J": [
+        },
+    "Grupo J": {
         {"id": "J1", "t1": "Argentina 🇦🇷", "t2": "Argélia 🇩🇿", "data": "16/06/2026", "hora": "22:00"},
         {"id": "J2", "t1": "Áustria 🇦🇹", "t2": "Jordânia 🇯🇴", "data": "17/06/2026", "hora": "01:00"},
         {"id": "J3", "t1": "Argentina 🇦🇷", "t2": "Áustria 🇦🇹", "data": "22/06/2026", "hora": "14:00"},
         {"id": "J4", "t1": "Jordânia 🇯🇴", "t2": "Argélia 🇩🇿", "data": "23/06/2026", "hora": "00:00"},
         {"id": "J5", "t1": "Jordânia 🇯🇴", "t2": "Argentina 🇦🇷", "data": "27/06/2026", "hora": "23:00"},
         {"id": "J6", "t1": "Argélia 🇩🇿", "t2": "Áustria 🇦🇹", "data": "27/06/2026", "hora": "23:00"}
-    ],
-    "Grupo K": [
+        },
+    "Grupo K": {
         {"id": "K1", "t1": "Portugal 🇵🇹", "t2": "RD Congo 🇨🇩", "data": "17/06/2026", "hora": "14:00"},
         {"id": "K2", "t1": "Uzbequistão 🇺🇿", "t2": "Colômbia 🇨🇴", "data": "17/06/2026", "hora": "23:00"},
         {"id": "K3", "t1": "Portugal 🇵🇹", "t2": "Uzbequistão 🇺🇿", "data": "23/06/2026", "hora": "14:00"},
         {"id": "K4", "t1": "Colômbia 🇨🇴", "t2": "RD Congo 🇨🇩", "data": "23/06/2026", "hora": "23:00"},
         {"id": "K5", "t1": "Colômbia 🇨🇴", "t2": "Portugal 🇵🇹", "data": "27/06/2026", "hora": "20:30"},
         {"id": "K6", "t1": "RD Congo 🇨🇩", "t2": "Uzbequistão 🇺🇿", "data": "27/06/2026", "hora": "20:30"}
-    ],
-    "Grupo L": [
+    },
+    "Grupo L": {
         {"id": "L1", "t1": "Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿", "t2": "Croácia 🇭🇷", "data": "17/06/2026", "hora": "17:00"},
         {"id": "L2", "t1": "Gana 🇬🇭", "t2": "Panamá 🇵🇦", "data": "17/06/2026", "hora": "20:00"},
         {"id": "L3", "t1": "Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿", "t2": "Gana 🇬🇭", "data": "23/06/2026", "hora": "17:00"},
         {"id": "L4", "t1": "Panamá 🇵🇦", "t2": "Croácia 🇭🇷", "data": "23/06/2026", "hora": "20:00"},
         {"id": "L5", "t1": "Panamá 🇵🇦", "t2": "Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿", "data": "27/06/2026", "hora": "18:00"},
         {"id": "L6", "t1": "Croácia 🇭🇷", "t2": "Gana 🇬🇭", "data": "27/06/2026", "hora": "18:00"}
-     ]
+    }
    }
 st.header("Fase de classificação⚽")
 
