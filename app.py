@@ -256,8 +256,6 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-st.write(f"DEBUG: Tipo de dado do grupo: {type(agenda_oficial[grupo_selecionado])}")
-st.write(f"DEBUG: Conteúdo do grupo: {agenda_oficial[grupo_selecionado]}")
 # --- LOGICA DE TABS COM PROTEÇÃO ---
 tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
 
