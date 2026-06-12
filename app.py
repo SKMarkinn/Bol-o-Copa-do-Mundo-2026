@@ -257,23 +257,27 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-# --- LOGICA DE TABS ---
-# 1. Definimos os dois espaços
+# --- LOGICA DE TABS ATUALIZADA ---
 tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
 
 with tab1:
     st.subheader("Faça seu Palpite")
-    for j_id, dados in agenda_oficial[grupo_selecionado].items():
-        # Se o jogo NÃO estiver nos resultados oficiais, é futuro
+    # Em vez de .items(), iteramos pela lista de jogos
+    for jogo in agenda_oficial[grupo_selecionado]:
+        j_id = jogo['id']
+        # Verifica se o jogo NÃO está nos resultados oficiais
         if j_id not in resultados_oficiais.get(grupo_selecionado, {}):
-            exibir_card_jogo(j_id, dados['time1'], dados['time2'], editavel=True)
+            exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], editavel=True)
+
 with tab2:
     st.subheader("Resultados")
-    for j_id, dados in agenda_oficial[grupo_selecionado].items():
-        # Se o jogo ESTIVER nos resultados, é finalizado
+    # Em vez de .items(), iteramos pela lista de jogos
+    for jogo in agenda_oficial[grupo_selecionado]:
+        j_id = jogo['id']
+        # Verifica se o jogo ESTÁ nos resultados oficiais
         if j_id in resultados_oficiais.get(grupo_selecionado, {}):
             res = resultados_oficiais[grupo_selecionado][j_id]
-            exibir_card_jogo(j_id, dados['time1'], dados['time2'], 
+            exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], 
                              gols1=res['g1'], gols2=res['g2'], editavel=False)
 st.divider()
 st.header("Classificação Copástica 🏆")
