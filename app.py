@@ -111,13 +111,10 @@ def exibir_card_jogo(jogo_id, time1, time2, gols1=None, gols2=None, editavel=Fal
             c_input1, c_input2 = st.columns(2)
             g1 = c_input1.number_input("Gols T1", min_value=0, key=f"p1_{jogo_id}")
             g2 = c_input2.number_input("Gols T2", min_value=0, key=f"p2_{jogo_id}")
-           if st.button("Confirmar Palpite", key=f"btn_{jogo_id}"):
-            # Chama a função que você já tem no topo do seu arquivo
-            # Passando o usuário logado (st.session_state.nick) e os dados do jogo
-            registrar_palpite(st.session_state.nick, grupo_selecionado, jogo_id, time1, time2, g1, g2)
-            st.success(f"Palpite de {st.session_state.nick} salvo!")
+            if st.button("Confirmar Palpite", key=f"btn_{jogo_id}"):
+                registrar_palpite(st.session_state.nick, grupo_selecionado, jogo_id, time1, time2, g1, g2)
+                st.success(f"Palpite de {st.session_state.nick} salvo!")
         else:
-            # Mostra o placar final para a aba de Jogos Finalizados
             st.info(f"Placar Final: {gols1} x {gols2}")
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
