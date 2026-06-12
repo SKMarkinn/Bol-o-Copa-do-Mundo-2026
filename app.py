@@ -256,36 +256,33 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-# --- LOGICA DE TABS BLINDADA ---
+# 3. TABS USANDO A LISTA (agenda_oficial)
 tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
 
-# Verificação de segurança: checa se o grupo existe e não é None
-grupo_dados = agenda_oficial.get(grupo_selecionado)
+# Obtém a lista de jogos do grupo selecionado
+lista_jogos = agenda_oficial.get(grupo_selecionado, [])
+# Obtém os resultados daquele grupo (se existirem)
+res_grupo = resultados_oficiais.get(grupo_selecionado, {})
 
-if grupo_dados is not None:
-    # Definimos resultados do grupo com fallback para dicionário vazio
-    res_grupo = resultados_oficiais.get(grupo_selecionado) if resultados_oficiais.get(grupo_selecionado) else {}
+with tab1:
+    st.subheader("Faça seu Palpite")
+    # Itera sobre a lista da agenda
+    for jogo in lista_jogos:
+        j_id = jogo['id']
+        # Se NÃO está nos resultados, é jogo futuro
+        if j_id not in res_grupo:
+            exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], editavel=True)
 
-    with tab1:
-        st.subheader("Faça seu Palpite")
-        # Se for lista, itera. Se for dicionário, itera.
-        if isinstance(grupo_dados, list):
-            for jogo in grupo_dados:
-                if jogo['id'] not in res_grupo:
-                    exibir_card_jogo(jogo['id'], jogo['t1'], jogo['t2'], editavel=True)
-        else:
-            st.warning("Formato de agenda inválido.")
-
-    with tab2:
-        st.subheader("Resultados")
-        if isinstance(grupo_dados, list):
-            for jogo in grupo_dados:
-                if jogo['id'] in res_grupo:
-                    res = res_grupo[jogo['id']]
-                    exibir_card_jogo(jogo['id'], jogo['t1'], jogo['t2'], 
-                                     gols1=res['g1'], gols2=res['g2'], editavel=False)
-else:
-    st.error(f"Erro: O grupo '{grupo_selecionado}' não foi encontrado na agenda oficial.")
+with tab2:
+    st.subheader("Resultados")
+    # Itera sobre a lista da agenda
+    for jogo in lista_jogos:
+        j_id = jogo['id']
+        # Se ESTÁ nos resultados, é jogo finalizado
+        if j_id in res_grupo:
+            res = res_grupo[j_id]
+            exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], 
+                             gols1=res['g1'], gols2=res['g2'], editavel=False)
 st.divider()
 st.header("Classificação Copástica 🏆")
 
