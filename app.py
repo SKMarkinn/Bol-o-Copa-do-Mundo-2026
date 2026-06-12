@@ -126,7 +126,7 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
         if meu_palpite:
             st.write(f"Seu palpite: **{meu_palpite['gols1']} x {meu_palpite['gols2']}**")
             g1_p, g2_p = int(meu_palpite['gols1']), int(meu_palpite['gols2'])
-                    g1_o, g2_o = int(jogo_res['g1']), int(jogo_res['g2'])
+            g1_o, g2_o = int(jogo_res['g1']), int(jogo_res['g2'])
                     
             if g1_p == g1_o and g2_p == g2_o:
                         st.success("Acertou em cheio! +1000 de Aura 🏆")
