@@ -256,33 +256,6 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-# 3. TABS USANDO A LISTA (agenda_oficial)
-tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
-
-# Obtém a lista de jogos do grupo selecionado
-lista_jogos = agenda_oficial.get(grupo_selecionado, [])
-# Obtém os resultados daquele grupo (se existirem)
-res_grupo = resultados_oficiais.get(grupo_selecionado, {})
-
-with tab1:
-    st.subheader("Faça seu Palpite")
-    # Itera sobre a lista da agenda
-    for jogo in lista_jogos:
-        j_id = jogo['id']
-        # Se NÃO está nos resultados, é jogo futuro
-        if j_id not in res_grupo:
-            exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], editavel=True)
-
-with tab2:
-    st.subheader("Resultados")
-    # Itera sobre a lista da agenda
-    for jogo in lista_jogos:
-        j_id = jogo['id']
-        # Se ESTÁ nos resultados, é jogo finalizado
-        if j_id in res_grupo:
-            res = res_grupo[j_id]
-            exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], 
-                             gols1=res['g1'], gols2=res['g2'], editavel=False)
 st.divider()
 st.header("Classificação Copástica 🏆")
 
