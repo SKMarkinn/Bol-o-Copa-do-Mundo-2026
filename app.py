@@ -234,6 +234,24 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
+# --- LOGICA DE TABS ---
+# 1. Definimos os dois espaços
+tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
+
+with tab1:
+    st.subheader("Faça seu Palpite")
+    # Aqui entra o seu loop que percorre os jogos e cria os inputs
+    # Exemplo:
+    # for jogo_id, dados in agenda_oficial[grupo_selecionado].items():
+    #     if jogo_id not in resultados_oficiais:
+    #         exibir_input_palpite(jogo_id, dados)
+
+with tab2:
+    st.subheader("Resultados")
+    # Aqui entra o seu loop que percorre apenas os jogos que JÁ TÊM resultado no Firebase
+    # Exemplo:
+    # for jogo_id, resultado in resultados_oficiais[grupo_selecionado].items():
+    #     exibir_placar_final(jogo_id, resultado)
 # --- EXIBIÇÃO DO RANKING (FINAL E LIMPO) ---
 st.divider()
 st.header("Classificação Copástica 🏆")
