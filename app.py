@@ -136,8 +136,6 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
                 st.error("Sobrou nada hein! 💀")            
         else:
             st.warning("Você não registrou palpite.")
-        else:
-            st.write("Aguardando resultado oficial...")
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
