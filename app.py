@@ -197,32 +197,7 @@ if 'agenda_oficial' not in locals():
      ]
    }
 st.header("Fase de classificação⚽")
-# --- 2. ÁREA DO ADMINISTRADOR ---
-with st.expander("Área do Administrador ⚙️"):
-    # O campo de senha entra aqui, DENTRO do expander
-    senha_admin = st.text_input("Senha de Admin", type="password", key="admin_password")
-    
-    # Só libera o restante se a senha estiver correta
-    if senha_admin == "Skcopa26@":
-        st.subheader("Registrar Resultado")
-        jogo_id_admin = st.text_input("ID do Jogo (ex: A1)", key="admin_id")
-        c_adm1, c_adm2 = st.columns(2)
-        g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0, key="admin_g1")
-        g_adm2 = c_adm2.number_input("Gols Time 2", min_value=0, key="admin_g2")
-        
-        if st.button("Salvar Resultado Oficial", key="btn_admin"):
-            registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
-            st.success("Resultado registrado com sucesso!")
-            
-        st.divider()
-        st.subheader("Zona de Perigo ⚠️")
-        if st.button("🚨 Resetar Tudo (Palpites e Resultados)"):
-            db.reference('palpites').set({})
-            db.reference('resultados_oficiais').set({})
-            st.warning("Sistema limpo! Todos os dados foram removidos.")
-    else:
-        # Mensagem que aparece enquanto a senha não é digitada
-        st.info("🔒 Digite a senha correta para acessar as ferramentas de administrador.")
+
 grupo_selecionado = st.selectbox("Selecione o Grupo:", list(agenda_oficial.keys()))
 # --- 3. LOOP DOS JOGOS ---
 jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
@@ -276,3 +251,31 @@ if not df_ranking.empty:
 else:
     # Caso esteja vazio
     st.info("Ainda não há palpites computados.")
+    
+st.divider() # Cria uma linha horizontal para separar o conteúdo principal do footer
+st.subheader("Ferramentas Administrativas 🛠️")
+with st.expander("Área do Administrador ⚙️"):
+    # O campo de senha entra aqui, DENTRO do expander
+    senha_admin = st.text_input("Senha de Admin", type="password", key="admin_password")
+    
+    # Só libera o restante se a senha estiver correta
+    if senha_admin == "Skcopa26@":
+        st.subheader("Registrar Resultado")
+        jogo_id_admin = st.text_input("ID do Jogo (ex: A1)", key="admin_id")
+        c_adm1, c_adm2 = st.columns(2)
+        g_adm1 = c_adm1.number_input("Gols Time 1", min_value=0, key="admin_g1")
+        g_adm2 = c_adm2.number_input("Gols Time 2", min_value=0, key="admin_g2")
+        
+        if st.button("Salvar Resultado Oficial", key="btn_admin"):
+            registrar_resultado_oficial(grupo_selecionado, jogo_id_admin, g_adm1, g_adm2)
+            st.success("Resultado registrado com sucesso!")
+            
+        st.divider()
+        st.subheader("Zona de Perigo ⚠️")
+        if st.button("🚨 Resetar Tudo (Palpites e Resultados)"):
+            db.reference('palpites').set({})
+            db.reference('resultados_oficiais').set({})
+            st.warning("Sistema limpo! Todos os dados foram removidos.")
+    else:
+        # Mensagem que aparece enquanto a senha não é digitada
+        st.info("🔒 Digite a senha correta para acessar as ferramentas de administrador.")
