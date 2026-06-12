@@ -79,6 +79,29 @@ def gerar_ranking():
     df = pd.DataFrame(list(ranking.items()), columns=['Usuário', 'Pontos'])
     if df.empty: return df
     return df.sort_values(by='Pontos', ascending=False)
+
+def exibir_card_jogo(jogo_id, time1, time2, gols1=None, gols2=None, editavel=False):
+    """
+    Cria um card visual para o jogo. 
+    Se editavel=True, mostra inputs. Se False, mostra apenas o placar.
+    """
+    with st.container(border=True):
+        col1, col2, col3 = st.columns([2, 1, 2])
+        col1.markdown(f"**{time1}**")
+        col2.write("vs")
+        col3.markdown(f"**{time2}**")
+        
+        if editavel:
+            # Inputs para a aba de Jogos Futuros
+            c_input1, c_input2 = st.columns(2)
+            g1 = c_input1.number_input("Gols T1", min_value=0, key=f"p1_{jogo_id}")
+            g2 = c_input2.number_input("Gols T2", min_value=0, key=f"p2_{jogo_id}")
+            if st.button("Confirmar Palpite", key=f"btn_{jogo_id}"):
+                # Sua lógica de salvar no Firebase aqui
+                st.success("Palpite salvo!")
+        else:
+            # Mostra o placar final para a aba de Jogos Finalizados
+            st.info(f"Placar Final: {gols1} x {gols2}")
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
@@ -240,19 +263,18 @@ tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
 
 with tab1:
     st.subheader("Faça seu Palpite")
-    # Aqui entra o seu loop que percorre os jogos e cria os inputs
-    # Exemplo:
-    # for jogo_id, dados in agenda_oficial[grupo_selecionado].items():
-    #     if jogo_id not in resultados_oficiais:
-    #         exibir_input_palpite(jogo_id, dados)
-
+   for j_id, dados in agenda_oficial[grupo_selecionado].items():
+        # Se o jogo NÃO estiver nos resultados oficiais, é futuro
+        if j_id not in resultados_oficiais.get(grupo_selecionado, {}):
+            exibir_card_jogo(j_id, dados['time1'], dados['time2'], editavel=True)
 with tab2:
     st.subheader("Resultados")
-    # Aqui entra o seu loop que percorre apenas os jogos que JÁ TÊM resultado no Firebase
-    # Exemplo:
-    # for jogo_id, resultado in resultados_oficiais[grupo_selecionado].items():
-    #     exibir_placar_final(jogo_id, resultado)
-# --- EXIBIÇÃO DO RANKING (FINAL E LIMPO) ---
+   for j_id, dados in agenda_oficial[grupo_selecionado].items():
+        # Se o jogo ESTIVER nos resultados, é finalizado
+        if j_id in resultados_oficiais.get(grupo_selecionado, {}):
+            res = resultados_oficiais[grupo_selecionado][j_id]
+            exibir_card_jogo(j_id, dados['time1'], dados['time2'], 
+                             gols1=res['g1'], gols2=res['g2'], editavel=False)
 st.divider()
 st.header("Classificação Copástica 🏆")
 
