@@ -114,8 +114,7 @@ def exibir_card_jogo(jogo_id, time1, time2, gols1=None, gols2=None, editavel=Fal
             if st.button("Confirmar Palpite", key=f"btn_{jogo_id}"):
                 registrar_palpite(st.session_state.nick, grupo_selecionado, jogo_id, time1, time2, g1, g2)
                 st.success(f"Palpite de {st.session_state.nick} salvo!")
-       else:
-            # 1. Busca os dados de forma segura
+        else:
             res_grupo = resultados_oficiais.get(grupo_selecionado, {})
             jogo_res = res_grupo.get(jogo_id) if res_grupo else None
             meu_palpite = db.child("palpites").child(st.session_state.nick).child(grupo_selecionado).child(jogo_id).get().val()
