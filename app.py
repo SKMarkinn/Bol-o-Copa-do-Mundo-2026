@@ -256,29 +256,36 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-# --- LOGICA DE TABS COM PROTEÇÃO ---
+# --- LOGICA DE TABS BLINDADA ---
 tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
 
-# Definimos uma variável de segurança para os resultados
-res_grupo = resultados_oficiais.get(grupo_selecionado) if resultados_oficiais.get(grupo_selecionado) else {}
+# Verificação de segurança: checa se o grupo existe e não é None
+grupo_dados = agenda_oficial.get(grupo_selecionado)
 
-with tab1:
-    st.subheader("Faça seu Palpite")
-    for jogo in agenda_oficial[grupo_selecionado]:
-        j_id = jogo['id']
-        # Verifica se o jogo NÃO está nos resultados oficiais
-        if j_id not in res_grupo:
-            exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], editavel=True)
+if grupo_dados is not None:
+    # Definimos resultados do grupo com fallback para dicionário vazio
+    res_grupo = resultados_oficiais.get(grupo_selecionado) if resultados_oficiais.get(grupo_selecionado) else {}
 
-with tab2:
-    st.subheader("Resultados")
-    for jogo in agenda_oficial[grupo_selecionado]:
-        j_id = jogo['id']
-        # Verifica se o jogo ESTÁ nos resultados oficiais
-        if j_id in res_grupo:
-            res = res_grupo[j_id]
-            exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], 
-                             gols1=res['g1'], gols2=res['g2'], editavel=False)
+    with tab1:
+        st.subheader("Faça seu Palpite")
+        # Se for lista, itera. Se for dicionário, itera.
+        if isinstance(grupo_dados, list):
+            for jogo in grupo_dados:
+                if jogo['id'] not in res_grupo:
+                    exibir_card_jogo(jogo['id'], jogo['t1'], jogo['t2'], editavel=True)
+        else:
+            st.warning("Formato de agenda inválido.")
+
+    with tab2:
+        st.subheader("Resultados")
+        if isinstance(grupo_dados, list):
+            for jogo in grupo_dados:
+                if jogo['id'] in res_grupo:
+                    res = res_grupo[jogo['id']]
+                    exibir_card_jogo(jogo['id'], jogo['t1'], jogo['t2'], 
+                                     gols1=res['g1'], gols2=res['g2'], editavel=False)
+else:
+    st.error(f"Erro: O grupo '{grupo_selecionado}' não foi encontrado na agenda oficial.")
 st.divider()
 st.header("Classificação Copástica 🏆")
 
