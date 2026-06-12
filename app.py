@@ -257,26 +257,27 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
-# --- LOGICA DE TABS ATUALIZADA ---
+# --- LOGICA DE TABS COM PROTEÇÃO ---
 tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
+
+# Definimos uma variável de segurança para os resultados
+res_grupo = resultados_oficiais.get(grupo_selecionado) if resultados_oficiais.get(grupo_selecionado) else {}
 
 with tab1:
     st.subheader("Faça seu Palpite")
-    # Em vez de .items(), iteramos pela lista de jogos
     for jogo in agenda_oficial[grupo_selecionado]:
         j_id = jogo['id']
         # Verifica se o jogo NÃO está nos resultados oficiais
-        if j_id not in resultados_oficiais.get(grupo_selecionado, {}):
+        if j_id not in res_grupo:
             exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], editavel=True)
 
 with tab2:
     st.subheader("Resultados")
-    # Em vez de .items(), iteramos pela lista de jogos
     for jogo in agenda_oficial[grupo_selecionado]:
         j_id = jogo['id']
         # Verifica se o jogo ESTÁ nos resultados oficiais
-        if j_id in resultados_oficiais.get(grupo_selecionado, {}):
-            res = resultados_oficiais[grupo_selecionado][j_id]
+        if j_id in res_grupo:
+            res = res_grupo[j_id]
             exibir_card_jogo(j_id, jogo['t1'], jogo['t2'], 
                              gols1=res['g1'], gols2=res['g2'], editavel=False)
 st.divider()
