@@ -225,8 +225,6 @@ grupo_selecionado = st.selectbox("Selecione o Grupo:", list(agenda_oficial.keys(
 # --- 3. LOOP DOS JOGOS ---
 jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
 # st.write(f"DEBUG: Jogos carregados para {grupo_selecionado}: {len(jogos_do_grupo)}")
-st.write(f"DEBUG: Tipo de dado do grupo: {type(agenda_oficial[grupo_selecionado])}")
-st.write(f"DEBUG: Conteúdo do grupo: {agenda_oficial[grupo_selecionado]}")
 for jogo in jogos_do_grupo:
     try:
         # Lógica de Tempo
@@ -258,6 +256,8 @@ for jogo in jogos_do_grupo:
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
+st.write(f"DEBUG: Tipo de dado do grupo: {type(agenda_oficial[grupo_selecionado])}")
+st.write(f"DEBUG: Conteúdo do grupo: {agenda_oficial[grupo_selecionado]}")
 # --- LOGICA DE TABS COM PROTEÇÃO ---
 tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
 
