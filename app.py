@@ -7,6 +7,21 @@ from firebase_admin import credentials, db
 import pytz
 from datetime import datetime, timedelta
 
+if 'nick' not in st.session_state:
+    st.session_state.nick = None
+
+with st.sidebar:
+    st.header("👤 Perfil")
+    if not st.session_state.nick:
+        nick_input = st.text_input("Escolha seu Nickname:")
+        if st.button("Entrar"):
+            st.session_state.nick = nick_input
+            st.rerun()
+    else:
+        st.write(f"Logado como: **{st.session_state.nick}**")
+        if st.button("Sair"):
+            st.session_state.nick = None
+            st.rerun()
 if not firebase_admin._apps:
     # Monta o dicionário de credenciais a partir das variáveis do Render
     cred_dict = {
