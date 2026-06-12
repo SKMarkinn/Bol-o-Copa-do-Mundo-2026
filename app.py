@@ -263,13 +263,13 @@ tab1, tab2 = st.tabs(["📅 Jogos Futuros", "🏁 Jogos Finalizados"])
 
 with tab1:
     st.subheader("Faça seu Palpite")
-   for j_id, dados in agenda_oficial[grupo_selecionado].items():
+    for j_id, dados in agenda_oficial[grupo_selecionado].items():
         # Se o jogo NÃO estiver nos resultados oficiais, é futuro
         if j_id not in resultados_oficiais.get(grupo_selecionado, {}):
             exibir_card_jogo(j_id, dados['time1'], dados['time2'], editavel=True)
 with tab2:
     st.subheader("Resultados")
-   for j_id, dados in agenda_oficial[grupo_selecionado].items():
+    for j_id, dados in agenda_oficial[grupo_selecionado].items():
         # Se o jogo ESTIVER nos resultados, é finalizado
         if j_id in resultados_oficiais.get(grupo_selecionado, {}):
             res = resultados_oficiais[grupo_selecionado][j_id]
