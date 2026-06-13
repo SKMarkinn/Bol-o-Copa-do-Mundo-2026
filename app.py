@@ -41,9 +41,15 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred, {
         'databaseURL': os.environ.get("FIREBASE_DATABASE_URL")
     })
-def registrar_palpite(usuario, grupo, jogo_id, t1, g1, t2, g2):
-    ref = db.reference(f'palpites/{grupo}/{usuario}')
-    ref.child(jogo_id).set({'time1': t1, 'gols1': g1, 'time2': t2, 'gols2': g2})
+def registrar_palpite(nick, grupo, jogo_id, t1, t2, g1, g2):
+    # ... seu código de salvamento ...
+    db.child("palpites").child(nick).child(grupo).child(jogo_id).set({
+        "gols1": g1, 
+        "gols2": g2
+    })
+    
+    st.success("Palpite registrado!")
+    st.rerun() # Força o Streamlit a ler tudo de novo e atualizar a tela
 
 def registrar_resultado_oficial(grupo, jogo_id, g1, g2):
     ref = db.reference(f'resultados_oficiais/{grupo}/{jogo_id}')
