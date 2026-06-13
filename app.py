@@ -2,8 +2,18 @@ import streamlit as st
 import os
 import json
 import pandas as pd
-import firebase_admin
-from firebase_admin import credentials, db
+import pyrebase
+
+config = {
+  "apiKey": "AIzaSyALnoAleE5B5zhHj7QPwP2iN7TEpl7fKgU",
+  "authDomain": "bolao-copa-do-mundo-2026-c4d2c.firebaseapp.com",
+  "databaseURL": "https://bolao-copa-do-mundo-2026-c4d2c-default-rtdb.firebaseio.com",
+  "storageBucket": "bolao-copa-do-mundo-2026-c4d2c.firebasestorage.app"
+}
+
+# Isso inicializa o 'db' que entende o .child()
+firebase = pyrebase.initialize_app(config)
+db = firebase.database()
 import pytz
 from datetime import datetime, timedelta
 
