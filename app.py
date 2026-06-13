@@ -132,7 +132,7 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
             st.write(f"Buscando em: palpites/{grupo_selecionado}/{st.session_state.nick}/{jogo_id}")
             st.write(f"Resultado do Firebase: {meu_palpite}")
             
-        if jogo_res:
+            if jogo_res:
                 # Exibe o resultado oficial
                 st.info(f"Resultado Real: {jogo_res.get('g1', 0)} x {jogo_res.get('g2', 0)}")
                 
