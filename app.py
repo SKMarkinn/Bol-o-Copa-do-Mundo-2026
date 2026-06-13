@@ -62,7 +62,7 @@ def registrar_palpite(nick, grupo, jogo_id, t1, t2, g1, g2):
     st.rerun() # Força o Streamlit a ler tudo de novo e atualizar a tela
 
 def registrar_resultado_oficial(grupo, jogo_id, g1, g2):
-    ref = db.reference(f'resultados_oficiais/{grupo}/{jogo_id}')
+    ref = db.child(f'resultados_oficiais/{grupo}/{jogo_id}')
     ref.set({'g1': g1, 'g2': g2})
 
 def calcular_pontos(gols1_palpite, gols2_palpite, gols1_oficial, gols2_oficial):
@@ -78,8 +78,8 @@ def calcular_pontos(gols1_palpite, gols2_palpite, gols1_oficial, gols2_oficial):
     return 0  
     
 def gerar_ranking():
-    palpites_db = db.reference('palpites').get()
-    resultados_db = db.reference('resultados_oficiais').get()
+    palpites_db = db.child('palpites').get()
+    resultados_db = db.child('resultados_oficiais').get()
     
     if not palpites_db or not resultados_db: 
         return pd.DataFrame(columns=['Usuário', 'Pontos'])
@@ -297,7 +297,7 @@ for jogo in jogos_do_grupo:
 
         # O EXPANDE DEVE ESTAR AQUI DENTRO
         with st.expander(f"{jogo['t1']} vs {jogo['t2']} - {jogo['data']} {jogo['hora']} 🕒"):
-            res = db.reference(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
+            res = db.child(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
             if res:
                 st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
             
@@ -355,8 +355,8 @@ with st.expander("Área do Administrador ⚙️"):
         st.divider()
         st.subheader("Zona de Perigo ⚠️")
         if st.button("🚨 Resetar Tudo (Palpites e Resultados)"):
-            db.reference('palpites').set({})
-            db.reference('resultados_oficiais').set({})
+            db.child('palpites').set({})
+            db.child('resultados_oficiais').set({})
             st.warning("Sistema limpo! Todos os dados foram removidos.")
     else:
         # Mensagem que aparece enquanto a senha não é digitada
