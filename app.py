@@ -124,24 +124,36 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
             registrar_palpite(st.session_state.nick, grupo_selecionado, jogo_id, g1, g2)
             st.success(f"Palpite de {st.session_state.nick} salvo!")
             st.rerun() # Atualiza a tela para mostrar o resultado
-    else:
-        # --- BLOCO DE AURA ---
-        st.info(f"Resultado Real: {res_oficial['g1']} x {res_oficial['g2']}")
-        meu_palpite = db.child("palpites").child(st.session_state.nick).child(grupo_selecionado).child(jogo_id).get().val()
-        
-        if meu_palpite:
-            st.write(f"Seu palpite: **{meu_palpite['gols1']} x {meu_palpite['gols2']}**")
-            g1_p, g2_p = int(meu_palpite['gols1']), int(meu_palpite['gols2'])
-            g1_o, g2_o = int(jogo_res['g1']), int(jogo_res['g2'])
+   else: # Bloco de resultados finalizados
+            # 1. Busca os dados de forma segura
+            res_grupo = resultados_oficiais.get(grupo_selecionado, {})
+            jogo_res = res_grupo.get(jogo_id)
+            meu_palpite = db.child("palpites").child(st.session_state.nick).child(grupo_selecionado).child(jogo_id).get().val()
+            
+            if jogo_res:
+                # Exibe o resultado oficial
+                st.info(f"Resultado Real: {jogo_res.get('g1', 0)} x {jogo_res.get('g2', 0)}")
+                
+                if meu_palpite:
+                    # Exibe o palpite do usuário (usando .get para evitar erro de chave)
+                    p1 = int(meu_palpite.get('gols1', 0))
+                    p2 = int(meu_palpite.get('gols2', 0))
+                    o1 = int(jogo_res.get('g1', 0))
+                    o2 = int(jogo_res.get('g2', 0))
                     
-            if g1_p == g1_o and g2_p == g2_o:
+                    st.write(f"Seu palpite: **{p1} x {p2}**")
+                    
+                    # 3. Lógica da Aura (agora com números garantidos)
+                    if p1 == o1 and p2 == o2:
                         st.success("Acertou em cheio! +1000 de Aura 🏆")
-            elif (g1_p > g2_p and g1_o > g2_o) or (g1_p < g2_p and g1_o < g2_o) or (g1_p == g2_p and g1_o == g2_o):
+                    elif (p1 > p2 and o1 > o2) or (p1 < p2 and o1 < o2) or (p1 == p2 and o1 == o2):
                         st.warning("Parabéns! Você acertou o vencedor! 📈")
+                    else:
+                        st.error("Sobrou nada hein! 💀")
+                else:
+                    st.warning("Você não registrou palpite para este jogo.")
             else:
-                st.error("Sobrou nada hein! 💀")            
-        else:
-            st.warning("Você não registrou palpite.")
+                st.write("Resultado oficial ainda não disponível.")
 # --- 1. CARREGAMENTO DOS DADOS ---
 # Certifique-se de que a estrutura 'agenda_oficial' esteja carregada aqui
 grupos_oficiais = {
