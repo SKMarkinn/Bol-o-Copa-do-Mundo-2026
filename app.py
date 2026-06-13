@@ -124,7 +124,7 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
             registrar_palpite(st.session_state.nick, grupo_selecionado, jogo_id, g1, g2)
             st.success(f"Palpite de {st.session_state.nick} salvo!")
             st.rerun() # Atualiza a tela para mostrar o resultado
-   else: # Bloco de resultados finalizados
+    else: # Bloco de resultados finalizados
             # 1. Busca os dados de forma segura
             res_grupo = resultados_oficiais.get(grupo_selecionado, {})
             jogo_res = res_grupo.get(jogo_id)
