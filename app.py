@@ -125,19 +125,16 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
             st.success(f"Palpite de {st.session_state.nick} salvo!")
             st.rerun() # Atualiza a tela para mostrar o resultado
     else: # Bloco de resultados finalizados
-            # 1. Busca os dados de forma segura
             res_grupo = resultados_oficiais.get(grupo_selecionado, {})
             jogo_res = res_grupo.get(jogo_id)
-            meu_palpite = db.child("palpites").child(grupo_selecionado).child(st.session_state.nick).child(jogo_id).get().val()
-            st.write(f"Buscando em: palpites/{grupo_selecionado}/{st.session_state.nick}/{jogo_id}")
-            st.write(f"Resultado do Firebase: {meu_palpite}")
             
             if jogo_res:
-                # Exibe o resultado oficial
                 st.info(f"Resultado Real: {jogo_res.get('g1', 0)} x {jogo_res.get('g2', 0)}")
                 
+                # BUSCA SIMPLIFICADA
+                meu_palpite = db.child("palpites").child(grupo_selecionado).child(st.session_state.nick).child(jogo_id).get().val()
+                
                 if meu_palpite:
-                    # Exibe o palpite do usuário (usando .get para evitar erro de chave)
                     p1 = int(meu_palpite.get('gols1', 0))
                     p2 = int(meu_palpite.get('gols2', 0))
                     o1 = int(jogo_res.get('g1', 0))
@@ -145,7 +142,6 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
                     
                     st.write(f"Seu palpite: **{p1} x {p2}**")
                     
-                    # 3. Lógica da Aura (agora com números garantidos)
                     if p1 == o1 and p2 == o2:
                         st.success("Acertou em cheio! +1000 de Aura 🏆")
                     elif (p1 > p2 and o1 > o2) or (p1 < p2 and o1 < o2) or (p1 == p2 and o1 == o2):
@@ -153,7 +149,8 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
                     else:
                         st.error("Sobrou nada hein! 💀")
                 else:
-                    st.warning("Você não registrou palpite para este jogo.")
+                    # DEBUG: Se cair aqui, é porque ele não achou o palpite
+                    st.write(f"Debug: Não achei palpite para {st.session_state.nick} no {grupo_selecionado}/{jogo_id}")
             else:
                 st.write("Resultado oficial ainda não disponível.")
 # --- 1. CARREGAMENTO DOS DADOS ---
