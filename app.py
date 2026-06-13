@@ -129,8 +129,10 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
             res_grupo = resultados_oficiais.get(grupo_selecionado, {})
             jogo_res = res_grupo.get(jogo_id)
             meu_palpite = db.child("palpites").child(grupo_selecionado).child(st.session_state.nick).child(jogo_id).get().val()
+            st.write(f"Buscando em: palpites/{grupo_selecionado}/{st.session_state.nick}/{jogo_id}")
+            st.write(f"Resultado do Firebase: {meu_palpite}")
             
-            if jogo_res:
+        if jogo_res:
                 # Exibe o resultado oficial
                 st.info(f"Resultado Real: {jogo_res.get('g1', 0)} x {jogo_res.get('g2', 0)}")
                 
