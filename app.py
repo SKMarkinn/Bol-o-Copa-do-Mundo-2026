@@ -128,7 +128,7 @@ def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
             # 1. Busca os dados de forma segura
             res_grupo = resultados_oficiais.get(grupo_selecionado, {})
             jogo_res = res_grupo.get(jogo_id)
-            meu_palpite = db.child("palpites").child(st.session_state.nick).child(grupo_selecionado).child(jogo_id).get().val()
+            meu_palpite = db.child("palpites").child(grupo_selecionado).child(st.session_state.nick).child(jogo_id).get().val()
             
             if jogo_res:
                 # Exibe o resultado oficial
