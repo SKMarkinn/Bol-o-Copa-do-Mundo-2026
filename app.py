@@ -78,8 +78,8 @@ def calcular_pontos(gols1_palpite, gols2_palpite, gols1_oficial, gols2_oficial):
     return 0  
     
 def gerar_ranking():
-    palpites_db = db.child('palpites').get()
-    resultados_db = db.child('resultados_oficiais').get()
+    palpites_db = db.child('palpites').get().val()
+    resultados_db = db.child('resultados_oficiais').get().val()
     
     if not palpites_db or not resultados_db: 
         return pd.DataFrame(columns=['Usuário', 'Pontos'])
@@ -118,7 +118,7 @@ def exibir_card_jogo(jogo_id, time1, time2, grupo_selecionado, editavel=True, go
         return # Para a execução aqui e não mostra o jogo sem login
 
     # 2. SE O JOGO JÁ TEM RESULTADO (Força o modo de exibição de Aura)
-    res_oficial = resultados_oficiais.get(grupo_selecionado, {}).get(jogo_id)
+    res_oficial = resultados_oficiais.get(grupo_selecionado, {}).get(jogo_id).val()
     if res_oficial:
         editavel = False # O jogo já acabou, não pode mais editar
 
@@ -135,8 +135,8 @@ def exibir_card_jogo(jogo_id, time1, time2, grupo_selecionado, editavel=True, go
             st.success(f"Palpite de {st.session_state.nick} salvo!")
             st.rerun() # Atualiza a tela para mostrar o resultado
     else: # Bloco de resultados finalizados
-            res_grupo = resultados_oficiais.get(grupo_selecionado, {})
-            jogo_res = res_grupo.get(jogo_id)
+            res_grupo = resultados_oficiais.get(grupo_selecionado, {}).val()
+            jogo_res = res_grupo.get(jogo_id).val()
             
             if jogo_res:
                 st.info(f"Resultado Real: {jogo_res.get('g1', 0)} x {jogo_res.get('g2', 0)}")
@@ -284,7 +284,7 @@ st.header("Fase de classificação⚽")
 
 grupo_selecionado = st.selectbox("Selecione o Grupo:", list(agenda_oficial.keys()))
 # --- 3. LOOP DOS JOGOS ---
-jogos_do_grupo = agenda_oficial.get(grupo_selecionado, [])
+jogos_do_grupo = agenda_oficial.get(grupo_selecionado, []).val()
 # st.write(f"DEBUG: Jogos carregados para {grupo_selecionado}: {len(jogos_do_grupo)}")
 for jogo in jogos_do_grupo:
     try:
