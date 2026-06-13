@@ -101,7 +101,7 @@ def gerar_ranking():
     if df.empty: return df
     return df.sort_values(by='Pontos', ascending=False)
 
-def exibir_card_jogo(jogo_id, time1, time2, editavel=True, gols1=0, gols2=0):
+def exibir_card_jogo(jogo_id, time1, time2, grupo_selecionado, editavel=True, gols1=0, gols2=0):
     # 1. VALIDAÇÃO DE LOGIN (Garante que ele sabe quem é o usuário)
     if 'nick' not in st.session_state or st.session_state.nick is None:
         st.warning("⚠️ Faça login no menu lateral para participar!")
