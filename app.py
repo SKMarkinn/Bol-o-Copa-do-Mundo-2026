@@ -307,25 +307,25 @@ for jogo in jogos_do_grupo:
                 st.write("Aguardando resultado oficial...")
 
          # 1. Lógica de exibição da mensagem de sucesso (Fora de qualquer if de tempo)
-         if st.session_state.get(f"sucesso_{jogo['id']}", False):
-             st.success("Palpite salvo com sucesso!")
-             st.session_state[f"sucesso_{jogo['id']}"] = False # Limpa a bandeira
+            if st.session_state.get(f"sucesso_{jogo['id']}", False):
+                st.success("Palpite salvo com sucesso!")
+                st.session_state[f"sucesso_{jogo['id']}"] = False # Limpa a bandeira
 
          # 2. Bloqueio ou liberação do formulário
-         if agora < limite_palpite:
-             g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
-             g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
-             nome_usuario = st.text_input(f"Seu Nome/Nick:", key=f"user_{jogo['id']}")
+            if agora < limite_palpite:
+                g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
+                g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
+                nome_usuario = st.text_input(f"Seu Nome/Nick:", key=f"user_{jogo['id']}")
     
-             if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
-                 if nome_usuario:
-                     registrar_palpite(nome_usuario, grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
-                     st.session_state[f"sucesso_{jogo['id']}"] = True # Marca o sucesso
-                     st.rerun() # Recarrega para mostrar a mensagem
-                 else:
-                     st.warning("Por favor, digite seu nome antes de salvar.")
-         else:
-             st.error("🔒 Palpites encerrados!")
+                if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
+                    if nome_usuario:
+                        registrar_palpite(nome_usuario, grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
+                        st.session_state[f"sucesso_{jogo['id']}"] = True # Marca o sucesso
+                        st.rerun() # Recarrega para mostrar a mensagem
+                    else:
+                        st.warning("Por favor, digite seu nome antes de salvar.")
+            else:
+                st.error("🔒 Palpites encerrados!")
 
     except Exception as e:
         st.error(f"Erro no jogo {jogo.get('id')}: {e}")
