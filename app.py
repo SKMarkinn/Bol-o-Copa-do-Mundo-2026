@@ -314,7 +314,7 @@ for jogo in jogos_do_grupo:
                 if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
                     if nome_usuario:
                         registrar_palpite(nome_usuario, grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
-                        st.success("Palpite salvo!")
+                        st.toast("Palpite salvo com sucesso! ✅")
                     else:
                         st.warning("Por favor, digite seu nome antes de salvar.")
             else:
