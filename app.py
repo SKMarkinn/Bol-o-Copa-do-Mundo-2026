@@ -311,19 +311,19 @@ for jogo in jogos_do_grupo:
                 g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
                 g2_palpite = st.number_input(f"Gols {jogo['t2']}", min_value=0, key=f"g2_{jogo['id']}")
                 nome_usuario = st.text_input(f"Seu Nome/Nick:", key=f"user_{jogo['id']}")
-               if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
-                   if nome_usuario:
-                       registrar_palpite(nome_usuario, grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
+                if st.button("Confirmar Palpite", key=f"btn_{jogo['id']}"):
+                    if nome_usuario:
+                        registrar_palpite(nome_usuario, grupo_selecionado, jogo['id'], jogo['t1'], g1_palpite, jogo['t2'], g2_palpite)
                       
                       # Use o toast aqui - ele aparece flutuando e não é sobrescrito
-                       st.toast("Palpite salvo com sucesso!", icon="✅")
+                        st.toast("Palpite salvo com sucesso!", icon="✅")
                       
                       # Um pequeno atraso para o usuário ver antes de recarregar
-                       import time
-                       time.sleep(1)
-                       st.rerun() 
-                   else:
-                       st.warning("Por favor, digite seu nome antes de salvar.")
+                        import time
+                        time.sleep(1)
+                        st.rerun() 
+                    else:
+                        st.warning("Por favor, digite seu nome antes de salvar.")
 
             if st.session_state.get(f"sucesso_{jogo['id']}", False):
                 st.success("Palpite salvo com sucesso!")
