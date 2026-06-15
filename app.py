@@ -62,7 +62,7 @@ def registrar_palpite(nick, grupo, jogo_id, t1, t2, g1, g2):
     st.rerun() # Força o Streamlit a ler tudo de novo e atualizar a tela
 
 def registrar_resultado_oficial(grupo, jogo_id, g1, g2):
-    ref = db.child(f'resultados_oficiais/{grupo}/{jogo_id}')
+    ref = db.child("resultados_oficiais").child(grupo).child(jogo_id).set({'g1': g1, 'g2': g2})
     ref.set({'g1': g1, 'g2': g2})
 
 def calcular_pontos(gols1_palpite, gols2_palpite, gols1_oficial, gols2_oficial):
@@ -297,9 +297,9 @@ for jogo in jogos_do_grupo:
 
         # O EXPANDE DEVE ESTAR AQUI DENTRO
         with st.expander(f"{jogo['t1']} vs {jogo['t2']} - {jogo['data']} {jogo['hora']} 🕒"):
-            res = db.child(f'resultados_oficiais/{grupo_selecionado}/{jogo["id"]}').get()
+            res_data = db.child("resultados_oficiais").child(grupo_selecionado).child(jogo["id"]).get().val()
             if res:
-                st.info(f"Resultado Real: {res['g1']} x {res['g2']}")
+                st.info(f"Resultado Real: {res_data.get('g1', 0)} x {res_data.get('g2', 0)}")
             
             # Bloqueio ou liberação
             if agora < limite_palpite:
