@@ -297,10 +297,15 @@ for jogo in jogos_do_grupo:
 
         # O EXPANDE DEVE ESTAR AQUI DENTRO
         with st.expander(f"{jogo['t1']} vs {jogo['t2']} - {jogo['data']} {jogo['hora']} 🕒"):
-            res_data = db.child("resultados_oficiais").child(grupo_selecionado).child(jogo["id"]).get().val()
-            if res:
-                st.info(f"Resultado Real: {res_data.get('g1', 0)} x {res_data.get('g2', 0)}")
+            # 1. Busca o dado do Firebase
+            res = db.child("resultados_oficiais").child(grupo_selecionado).child(jogo['id']).get().val()
             
+            # 2. Verifica se res existe antes de tentar usar
+            if res:
+                st.info(f"Resultado Real: {res.get('g1', 0)} x {res.get('g2', 0)}")
+            else:
+                st.write("Aguardando resultado oficial...")
+
             # Bloqueio ou liberação
             if agora < limite_palpite:
                 g1_palpite = st.number_input(f"Gols {jogo['t1']}", min_value=0, key=f"g1_{jogo['id']}")
